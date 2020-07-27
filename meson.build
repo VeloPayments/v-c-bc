@@ -132,20 +132,8 @@ endif
 
 vcblockchain_include = include_directories('include')
 
-vcblockchain_lib = static_library('vcblockchain', src,
-  dependencies : vcblockchain_lib_deps,
-  include_directories: vcblockchain_include,
-  objects : objects
-)
-
-vcblockchain_test = executable('testvcblockchain', test_src,
-  dependencies : [gtest, vpr, vccert, vcdb, vccrypt, lmdb],
-  link_with : vcblockchain_lib
-)
-
-test('testvcblockchain', vcblockchain_test)
-
 vcblockchain_include_directories = [
+  vcmodel_include,
   vcblockchain_include,
   vpr_include,
   vccert_include,
@@ -161,7 +149,21 @@ if event_sub.found()
   vcblockchain_include_directories += [event_include]
 endif
 
+vcblockchain_lib = static_library('vcblockchain', src,
+  dependencies : vcblockchain_lib_deps,
+  include_directories: vcblockchain_include_directories,
+  objects : objects
+)
+
 vcblockchain_dep = declare_dependency(
   link_with : vcblockchain_lib,
   include_directories : vcblockchain_include_directories
 )
+
+vcblockchain_test = executable('testvcblockchain', test_src,
+  dependencies : [gtest, vpr, vccert, vcdb, vccrypt, lmdb],
+  include_directories: vcblockchain_include_directories,
+  link_with : vcblockchain_lib
+)
+
+test('testvcblockchain', vcblockchain_test)
