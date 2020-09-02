@@ -61,6 +61,16 @@ extern "C" {
 #define VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_TYPE 0x5105
 
 /**
+ * \brief An unexpected packet size was encountered in the protocol.
+ */
+#define VCBLOCKCHAIN_ERROR_PROTOCOL_UNEXPECTED_PAYLOAD_SIZE 0x5106
+
+/**
+ * \brief An unexpected value was encountered in the protocol.
+ */
+#define VCBLOCKCHAIN_ERROR_PROTOCOL_UNEXPECTED_VALUE 0x5107
+
+/**
  * @}
  */
 
