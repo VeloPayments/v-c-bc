@@ -71,6 +71,16 @@ extern "C" {
 #define VCBLOCKCHAIN_ERROR_PROTOCOL_UNEXPECTED_VALUE 0x5107
 
 /**
+ * \brief A cryptographic error was encountered during a socket interaction.
+ */
+#define VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO 0x5108
+
+/**
+ * \brief An unauthorized packet was received by the ssock interface.
+ */
+#define VCBLOCKCHAIN_ERROR_SSOCK_UNAUTHORIZED_PACKET 0x5109
+
+/**
  * @}
  */
 
