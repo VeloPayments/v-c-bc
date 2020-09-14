@@ -288,6 +288,7 @@ TEST(test_ssock_read_authed_data, happy_path)
 
     /* clean up. */
     release(&alloc_opts, val);
+    dispose((disposable_t*)&sock);
     dispose((disposable_t*)&header);
     dispose((disposable_t*)&encrypted_header);
     dispose((disposable_t*)&encrypted_payload);
