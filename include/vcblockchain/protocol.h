@@ -127,6 +127,40 @@ int vcblockchain_protocol_recvresp_handshake_request(
     vccrypt_buffer_t* shared_secret, uint32_t* offset, uint32_t* status);
 
 /**
+ * \brief Receive a response from the API.
+ *
+ * \param sock                      The socket from which this response is read.
+ * \param suite                     The crypto suite to use for this read.
+ * \param server_iv                 Pointer to the server_iv to use, updated as
+ *                                  a consequence of this call.
+ * \param shared_secret             The shared secret key for this request.
+ * \param response                  Pointer to an uninitialized buffer. On
+ *                                  success, this buffer is initialized with the
+ *                                  response and must be disposed by the caller
+ *                                  when no longer needed.
+ *
+ * \note - this function requires that the handshake request send / receive, and
+ * the handshake ack send have each been performed before it can be used.
+ *
+ * This call reads a response from the protocol. On success, the server_iv is
+ * incremented, and the response buffer is initialized with the response
+ * received, and must be disposed by the caller when no longer needed. This
+ * response is the raw bytes of the response as decrypted by this call. The
+ * caller can decode this response into a structure by calling \ref
+ * vcblockchain_protocol_response_decode.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - VCBLOCKCHAIN_ERROR_SSOCK_READ if writing to the socket failed.
+ *      - VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY if this operation encountered an
+ *        out-of-memory error.
+ *      - a non-zero error response if something else has failed.
+ */
+int vcblockchain_protocol_recvresp(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
+    vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
+
+/**
  * \brief Decode the header values of a response.
  *
  * \param request_id                Pointer to receive the request id on
