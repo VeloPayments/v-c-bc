@@ -114,6 +114,32 @@ typedef struct protocol_resp_handshake_request
     vccrypt_buffer_t server_cr_hmac;
 } protocol_resp_handshake_request;
 
+/**
+ * \brief The decoded protocol request for the handshake ack.
+ */
+typedef struct protocol_req_handshake_ack
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the C/R digest. */
+    vccrypt_buffer_t digest;
+} protocol_req_handshake_ack;
+
+/**
+ * \brief The decoded protocol response for the handshake ack request.
+ */
+typedef struct protocol_resp_handshake_ack
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_handshake_ack;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

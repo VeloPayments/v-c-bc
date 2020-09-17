@@ -127,6 +127,31 @@ int vcblockchain_protocol_recvresp_handshake_request(
     vccrypt_buffer_t* shared_secret, uint32_t* offset, uint32_t* status);
 
 /**
+ * \brief Send a handshake acknowledge to the API.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this handshake.
+ * \param client_iv                 Pointer to receive the updated client IV.
+ * \param server_iv                 Pointer to receive the updated server IV.
+ * \param shared_secret             The shared secret key for this request.
+ * \param server_challenge_nonce    The server challenge nonce for this request.
+ *
+ * This function sends the handshake acknowledgement as an authorized packet to
+ * the server.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - VCBLOCKCHAIN_ERROR_SSOCK_WRITE if writing to the socket failed.
+ *      - VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY if this operation encountered an
+ *        out-of-memory error.
+ *      - a non-zero error response if something else has failed.
+ */
+int vcblockchain_protocol_sendreq_handshake_ack(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    uint64_t* server_iv, vccrypt_buffer_t* shared_secret,
+    const vccrypt_buffer_t* server_challenge_nonce);
+
+/**
  * \brief Receive a response from the API.
  *
  * \param sock                      The socket from which this response is read.
