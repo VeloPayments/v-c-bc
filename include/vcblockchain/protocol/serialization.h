@@ -113,6 +113,88 @@ int vcblockchain_protocol_decode_resp_handshake_request(
     protocol_resp_handshake_request* resp, vccrypt_suite_options_t* suite,
     const void* payload, size_t payload_size);
 
+/**
+ * \brief Encode a handshake acknowledge request using the given parameters.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded handshake ack packet.
+ * \param suite                     The crypto suite to use for this request.
+ * \param digest                    Pointer to buffer holding the mac digest.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_handshake_ack(
+    vccrypt_buffer_t* buffer, vccrypt_suite_options_t* suite,
+    const vccrypt_buffer_t* digest);
+
+/**
+ * \brief Decode a handshake ack request using the given parameters.
+ *
+ * \param req                       The decoded request buffer.
+ * \param suite                     The crypto suite to use for this request.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p req structure is initialized with the decoded values.  The
+ * caller owns this structure and must \ref dispose() it when it is no longer
+ * needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_req_handshake_ack(
+    protocol_req_handshake_ack* req, vccrypt_suite_options_t* suite,
+    const void* payload, size_t payload_size);
+
+/**
+ * \brief Encode a handshake ack response using the given parameters.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded handshake response
+ *                                  packet.
+ * \param alloc_opts                The allocator options to use to allocate the
+ *                                  buffer.
+ * \param offset                    The offset for this response.
+ * \param status                    The status for this response.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * response.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_handshake_ack(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, uint32_t status);
+
+/**
+ * \brief Decode a handshake ack response using the given parameters.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_handshake_ack(
+    protocol_resp_handshake_ack* resp,
+    const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
