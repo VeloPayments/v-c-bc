@@ -195,6 +195,88 @@ int vcblockchain_protocol_decode_resp_handshake_ack(
     protocol_resp_handshake_ack* resp,
     const void* payload, size_t payload_size);
 
+/**
+ * \brief Encode a latest block id get request.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded request packet.
+ * \param alloc_opts                The allocator to use for this request.
+ * \param offset                    The offset to use for this request.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_latest_block_id_get(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset);
+
+/**
+ * \brief Decode a latest block id get request.
+ *
+ * \param req                       The decoded request buffer.
+ * \param alloc_opts                The allocator options to use.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p req structure is initialized with the decoded values. The
+ * caller owns this structure and must \ref dispose() it when it is no longer
+ * needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_req_latest_block_id_get(
+    protocol_req_latest_block_id_get* req, allocator_options_t* alloc_opts,
+    const void* payload, size_t payload_size);
+
+/**
+ * \brief Encode a latest block id get response using the given parameters.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded response.
+ * \param alloc_opts                The allocator options to use to allocate the
+ *                                  buffer.
+ * \param offset                    The offset for this response.
+ * \param status                    The status for this response.
+ * \param block_id                  The latest block id.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * response.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_latest_block_id_get(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, uint32_t status, const vpr_uuid* block_id);
+
+/**
+ * \brief Decode a latest block id get response.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_latest_block_id_get(
+    protocol_resp_latest_block_id_get* resp,
+    const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

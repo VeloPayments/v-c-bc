@@ -140,6 +140,36 @@ typedef struct protocol_resp_handshake_ack
     uint32_t status;
 } protocol_resp_handshake_ack;
 
+/**
+ * \brief The decoded protocol request for the latest block id get request.
+ */
+typedef struct protocol_req_latest_block_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+} protocol_req_latest_block_id_get;
+
+/**
+ * \brief The decoded protocol response for the latest block id get response.
+ */
+typedef struct protocol_resp_latest_block_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief the block id. */
+    vpr_uuid block_id;
+} protocol_resp_latest_block_id_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
