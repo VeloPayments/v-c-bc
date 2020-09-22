@@ -26,8 +26,7 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     const uint64_t EXPECTED_CLIENT_IV = 2;
-    const uint64_t EXPECTED_SERVER_IV_AFTER_SENDREQ = 1;
-    const uint64_t EXPECTED_SERVER_IV_AFTER_RECVRESP = 2;
+    const uint64_t EXPECTED_SERVER_IV_AFTER_SENDREQ = 0x8000000000000001;
     const uint8_t SHARED_SECRET[32] = {
         0x16, 0xac, 0x42, 0x3e, 0x91, 0x9d, 0x40, 0x6b,
         0xa6, 0x1c, 0x9a, 0x92, 0x70, 0x62, 0x2d, 0xe6,
@@ -152,14 +151,14 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
+    /* force the server_iv to 1 for recvresp. */
+    server_iv = 0x0000000000000001;
+
     /* reading a response should succeed. */
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_recvresp(
             &sock, &suite, &server_iv, &shared_secret, &out));
-
-    /* the server iv should be correct. */
-    EXPECT_EQ(EXPECTED_SERVER_IV_AFTER_RECVRESP, server_iv);
 
     /* the digest should match. */
     ASSERT_EQ(digest.size, out.size);
