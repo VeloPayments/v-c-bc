@@ -204,6 +204,50 @@ typedef struct protocol_resp_transaction_submit
     uint32_t status;
 } protocol_resp_transaction_submit;
 
+/**
+ * \brief The decoded protocol request for the block get request.
+ */
+typedef struct protocol_req_block_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the transaction id. */
+    vpr_uuid block_id;
+} protocol_req_block_get;
+
+/**
+ * \brief The decoded protocol response for the block get response.
+ */
+typedef struct protocol_resp_block_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief the block id. */
+    vpr_uuid block_id;
+    /** \brief the previous block id. */
+    vpr_uuid prev_block_id;
+    /** \brief the next block id. */
+    vpr_uuid next_block_id;
+    /** \brief the first transaction id in the block. */
+    vpr_uuid first_txn_id;
+    /** \brief the block height. */
+    uint64_t block_height;
+    /** \brief the serialized block size. */
+    uint64_t block_size;
+    /** \brief the block certificate. */
+    vccrypt_buffer_t block_cert;
+} protocol_resp_block_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
