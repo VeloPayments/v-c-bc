@@ -46,7 +46,7 @@ int ssock_write_uint64(ssock* sock, uint64_t val)
     }
 
     /* attempt to write the length of this value to the socket. */
-    uint32_t hlen = htonl(sizeof(val));
+    uint32_t hlen = vchtonl(sizeof(val));
     size_t hlen_size = sizeof(hlen);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != ssock_write(sock, &hlen, &hlen_size) || sizeof(hlen) != hlen_size)
     {

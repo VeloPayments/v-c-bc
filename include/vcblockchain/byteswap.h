@@ -40,11 +40,15 @@ extern "C" {
  *
  * \returns the swapped value.
  */
-inline int32_t bswap_32(int32_t val)
+inline int32_t vcbswap_32(int32_t val)
 {
     uint32_t v = (uint32_t)val;
 
-    return ((v & 0xFF000000) >> 24) | ((v & 0x00FF0000) >> 8) | ((v & 0x0000FF00) << 8) | ((v & 0x000000FF) << 24);
+    return
+        ((v & 0xFF000000) >> 24)
+      | ((v & 0x00FF0000) >> 8)
+      | ((v & 0x0000FF00) << 8)
+      | ((v & 0x000000FF) << 24);
 }
 
 /**
@@ -63,10 +67,10 @@ int64_t bswap_64(int64_t val);
  *
  * \returns the swapped value.
  */
-inline int32_t htonl(int32_t val)
+inline int32_t vchtonl(int32_t val)
 {
 #ifdef VCBLOCKCHAIN_LITTLE_ENDIAN
-    return bswap_32(val);
+    return vcbswap_32(val);
 #else
     return val;
 #endif
@@ -79,10 +83,10 @@ inline int32_t htonl(int32_t val)
  *
  * \returns the swapped value.
  */
-inline int32_t ntohl(int32_t val)
+inline int32_t vcntohl(int32_t val)
 {
 #ifdef VCBLOCKCHAIN_LITTLE_ENDIAN
-    return bswap_32(val);
+    return vcbswap_32(val);
 #else
     return val;
 #endif

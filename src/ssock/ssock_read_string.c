@@ -72,7 +72,7 @@ int ssock_read_string(ssock* sock, allocator_options_t* alloc_opts, char** val)
     }
 
     /* convert the size to host byte order. */
-    size = ntohl(nsize);
+    size = vcntohl(nsize);
 
     /* cap the maximum string size at 10 MB. */
     if (size > (10 * 1024 * 1024))

@@ -72,7 +72,7 @@ int ssock_read_data(
     }
 
     /* convert the size to host byte order. */
-    *size = ntohl(nsize);
+    *size = vcntohl(nsize);
 
     /* attempt to allocate memory for this data. */
     *val = allocate(alloc_opts, *size);

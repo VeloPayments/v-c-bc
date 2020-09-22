@@ -90,7 +90,7 @@ TEST(test_ssock_write_string, happy_path)
     ASSERT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());
     uint32_t net_size;
     memcpy(&net_size, &write_calls[1]->buf[0], sizeof(net_size));
-    EXPECT_EQ(strlen(EXPECTED_STRING), (size_t)ntohl(net_size));
+    EXPECT_EQ(strlen(EXPECTED_STRING), (size_t)vcntohl(net_size));
 
     /* the third buffer contains the data. */
     ASSERT_EQ(strlen(EXPECTED_STRING), write_calls[2]->buf.size());

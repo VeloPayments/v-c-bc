@@ -99,7 +99,7 @@ TEST(test_ssock_read_string, happy_path)
     /* create a buffer for the size. */
     auto b2 = make_shared<vector<uint8_t>>();
     uint32_t size = strlen(EXPECTED_STRING);
-    uint32_t net_size = htonl(size);
+    uint32_t net_size = vchtonl(size);
     uint8_t size_buf[4];
     memcpy(size_buf, &net_size, 4);
     copy(size_buf, size_buf + 4, back_inserter(*b2));

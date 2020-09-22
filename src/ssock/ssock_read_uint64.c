@@ -66,7 +66,7 @@ int ssock_read_uint64(ssock* sock, uint64_t* val)
     }
 
     /* convert the size to host byte order. */
-    size = ntohl(nsize);
+    size = vcntohl(nsize);
 
     /* verify the size. */
     if (sizeof(uint64_t) != size)
