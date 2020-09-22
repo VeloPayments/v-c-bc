@@ -81,7 +81,8 @@ int vcblockchain_protocol_sendreq_handshake_ack(
     }
 
     /* set the client and server IVs. */
-    *client_iv = *server_iv = 0x0000000000000001;
+    *client_iv = 0x0000000000000001;
+    *server_iv = 0x8000000000000001;
 
     /* write the IPC authed data packet to the server. */
     retval =
