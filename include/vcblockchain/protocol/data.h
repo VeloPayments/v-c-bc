@@ -170,6 +170,40 @@ typedef struct protocol_resp_latest_block_id_get
     vpr_uuid block_id;
 } protocol_resp_latest_block_id_get;
 
+/**
+ * \brief The decoded protocol request for the transaction submit request.
+ */
+typedef struct protocol_req_transaction_submit
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the transaction id. */
+    vpr_uuid txn_id;
+    /** \brief the artifact id. */
+    vpr_uuid artifact_id;
+    /** \brief the certificate. */
+    vccrypt_buffer_t cert;
+} protocol_req_transaction_submit;
+
+/**
+ * \brief The decoded protocol response for the transaction submit response.
+ */
+typedef struct protocol_resp_transaction_submit
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_transaction_submit;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

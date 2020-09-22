@@ -277,6 +277,93 @@ int vcblockchain_protocol_decode_resp_latest_block_id_get(
     protocol_resp_latest_block_id_get* resp,
     const void* payload, size_t payload_size);
 
+/**
+ * \brief Encode a transaction submit request.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded request packet.
+ * \param alloc_opts                The allocator to use for this request.
+ * \param offset                    The offset to use for this request.
+ * \param txn_id                    The id of this transaction.
+ * \param artifact_id               The artifact id of this transaction.
+ * \param cert                      Pointer to the certificate data for this
+ *                                  transaction.
+ * \param cert_size                 The size of this certificate in bytes.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_transaction_submit(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, const vpr_uuid* txn_id, const vpr_uuid* artifact_id,
+    const void* cert, size_t cert_size);
+
+/**
+ * \brief Decode a transaction submit request.
+ *
+ * \param req                       The decoded request buffer.
+ * \param alloc_opts                The allocator options to use.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p req structure is initialized with the decoded values. The
+ * caller owns this structure and must \ref dispose() it when it is no longer
+ * needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_req_transaction_submit(
+    protocol_req_transaction_submit* req, allocator_options_t* alloc_opts,
+    const void* payload, size_t payload_size);
+
+/**
+ * \brief Encode a transaction submit response using the given parameters.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded response.
+ * \param alloc_opts                The allocator options to use to allocate the
+ *                                  buffer.
+ * \param offset                    The offset for this response.
+ * \param status                    The status for this response.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * response.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_transaction_submit(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, uint32_t status);
+
+/**
+ * \brief Decode a transaction submit response.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_transaction_submit(
+    protocol_resp_transaction_submit* resp,
+    const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
