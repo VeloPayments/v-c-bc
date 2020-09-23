@@ -248,6 +248,38 @@ typedef struct protocol_resp_block_get
     vccrypt_buffer_t block_cert;
 } protocol_resp_block_get;
 
+/**
+ * \brief The decoded protocol request for the block next id get request.
+ */
+typedef struct protocol_req_block_next_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the transaction id. */
+    vpr_uuid block_id;
+} protocol_req_block_next_id_get;
+
+/**
+ * \brief The decoded protocol response for the block next id get response.
+ */
+typedef struct protocol_resp_block_next_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief the next block id. */
+    vpr_uuid next_block_id;
+} protocol_resp_block_next_id_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
