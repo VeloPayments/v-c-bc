@@ -45,11 +45,6 @@ vpr = dependency('vpr',
   fallback : ['vpr', 'vpr_dep']
 )
 
-vcdb = dependency('vcdb',
-  required : true,
-  fallback : ['vcdb', 'vcdb_dep']
-)
-
 if meson.is_cross_build()
   lmdb = disabler()
 else
@@ -81,10 +76,6 @@ vccrypt_sub = subproject('vccrypt')
 vccrypt_lib = vccrypt_sub.get_variable('vccrypt_lib')
 vccrypt_include = vccrypt_sub.get_variable('vccrypt_include')
 
-vcdb_sub = subproject('vcdb')
-vcdb_lib = vcdb_sub.get_variable('vcdb_lib')
-vcdb_include = vcdb_sub.get_variable('vcdb_include')
-
 vcmodel_sub = subproject('vcmodel')
 vcmodel_include = vcmodel_sub.get_variable('vcmodel_include')
 
@@ -112,7 +103,6 @@ event_include = event_sub.include_directories('event_static')
 objects = [
   vpr_lib.extract_all_objects(),
   vccert_lib.extract_all_objects(),
-  vcdb_lib.extract_all_objects(),
   vccrypt_lib.extract_all_objects()
 ]
 
@@ -124,7 +114,7 @@ if event_sub.found()
   objects += [event_lib.extract_all_objects()]
 endif
 
-vcblockchain_lib_deps = [vcmodel, vpr, vcdb, vccert, vccrypt]
+vcblockchain_lib_deps = [vcmodel, vpr, vccert, vccrypt]
 
 if lmdb.found()
   vcblockchain_lib_deps += [lmdb]
@@ -138,7 +128,6 @@ vcblockchain_include_directories = [
   vpr_include,
   vccert_include,
   vccrypt_include,
-  vcdb_include
 ]
 
 if lmdb_sub.found()
@@ -161,7 +150,7 @@ vcblockchain_dep = declare_dependency(
 )
 
 vcblockchain_test = executable('testvcblockchain', test_src,
-  dependencies : [gtest, vpr, vccert, vcdb, vccrypt, lmdb],
+  dependencies : [gtest, vpr, vccert, vccrypt, lmdb],
   include_directories: vcblockchain_include_directories,
   link_with : vcblockchain_lib
 )
