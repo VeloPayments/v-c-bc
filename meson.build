@@ -91,10 +91,12 @@ lmdb_lib = lmdb_sub.get_variable('lmdb')
 
 if meson.is_cross_build()
   event_sub = disabler()
+  event = disabler()
   message('libevent disabled for cross build!')
 else
   cmake = import('cmake')
-  event_sub = cmake.subproject('libevent', cmake_options: ['-DEVENT__DISABLE_OPENSSL=ON'])
+  event_sub = cmake.subproject('libevent', cmake_options: ['-DEVENT__DISABLE_OPENSSL=ON', '-DEVENT__DISABLE_MBEDTLS=ON', '-DEVENT__LIBRARY_TYPE=STATIC'])
+  event = event_sub.dependency('event')
 endif
 
 event_lib = event_sub.target('event_static')
@@ -118,6 +120,10 @@ vcblockchain_lib_deps = [vcmodel, vpr, vccert, vccrypt]
 
 if lmdb.found()
   vcblockchain_lib_deps += [lmdb]
+endif
+
+if event.found()
+  vcblockchain_lib_deps += [event]
 endif
 
 vcblockchain_include = include_directories('include')
