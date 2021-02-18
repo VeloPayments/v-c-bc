@@ -128,6 +128,7 @@ if event.found()
 endif
 
 vcblockchain_include = include_directories('include')
+config_include = include_directories('.')
 
 vcblockchain_include_directories = [
   vcmodel_include,
@@ -147,7 +148,7 @@ endif
 
 vcblockchain_lib = static_library('vcblockchain', src,
   dependencies : vcblockchain_lib_deps,
-  include_directories: vcblockchain_include_directories,
+  include_directories: [vcblockchain_include_directories, config_include],
   objects : objects
 )
 
@@ -158,8 +159,16 @@ vcblockchain_dep = declare_dependency(
 
 vcblockchain_test = executable('testvcblockchain', test_src,
   dependencies : [gtest, vpr, vccert, vccrypt, lmdb],
-  include_directories: vcblockchain_include_directories,
+  include_directories: [vcblockchain_include_directories, config_include],
   link_with : vcblockchain_lib
 )
 
 test('testvcblockchain', vcblockchain_test)
+
+conf_data = configuration_data()
+conf_data.set('VERSION', meson.project_version())
+configure_file(
+  input : 'config.h.in',
+  output : 'config.h',
+  configuration : conf_data
+)
