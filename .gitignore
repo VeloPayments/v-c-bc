@@ -4,6 +4,8 @@ build
 subprojects/googletest
 subprojects/libevent
 subprojects/lmdb
+subprojects/minunit
+subprojects/rcpr
 subprojects/vccert
 subprojects/vccrypt
 subprojects/vcdb
