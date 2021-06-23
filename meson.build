@@ -90,12 +90,13 @@ endif
 lmdb_include = lmdb_sub.get_variable('lmdb_inc')
 lmdb_lib = lmdb_sub.get_variable('lmdb')
 
+cmake = import('cmake')
+
 if meson.is_cross_build()
   event_sub = disabler()
   event = disabler()
   message('libevent disabled for cross build!')
 else
-  cmake = import('cmake')
   event_sub = cmake.subproject('libevent', cmake_options: ['-DEVENT__DISABLE_OPENSSL=ON', '-DEVENT__DISABLE_MBEDTLS=ON', '-DEVENT__LIBRARY_TYPE=STATIC'])
   event = event_sub.dependency('event')
 endif
@@ -103,7 +104,17 @@ endif
 event_lib = event_sub.target('event_static')
 event_include = event_sub.include_directories('event_static')
 
+minunit_proj = cmake.subproject('minunit')
+minunit = minunit_proj.dependency('minunit')
+
+rcpr_proj = cmake.subproject('rcpr')
+rcpr = rcpr_proj.dependency('rcpr')
+rcpr_lib = rcpr_proj.target('rcpr')
+rcpr_test = rcpr_proj.target('testrcpr')
+rcpr_test_dep = rcpr_proj.target('test')
+
 objects = [
+  rcpr_lib.extract_all_objects(),
   vpr_lib.extract_all_objects(),
   vccert_lib.extract_all_objects(),
   vccrypt_lib.extract_all_objects()
@@ -117,7 +128,7 @@ if event_sub.found()
   objects += [event_lib.extract_all_objects()]
 endif
 
-vcblockchain_lib_deps = [vcmodel, vpr, vccert, vccrypt]
+vcblockchain_lib_deps = [rcpr, vcmodel, vpr, vccert, vccrypt]
 
 if lmdb.found()
   vcblockchain_lib_deps += [lmdb]
@@ -153,17 +164,18 @@ vcblockchain_lib = static_library('vcblockchain', src,
 )
 
 vcblockchain_dep = declare_dependency(
-  link_with : vcblockchain_lib,
+  link_with : [vcblockchain_lib, rcpr_lib],
   include_directories : vcblockchain_include_directories
 )
 
 vcblockchain_test = executable('testvcblockchain', test_src,
-  dependencies : [gtest, vpr, vccert, vccrypt, lmdb],
+  dependencies : [minunit, rcpr, gtest, vpr, vccert, vccrypt, lmdb],
   include_directories: [vcblockchain_include_directories, config_include],
   link_with : vcblockchain_lib
 )
 
 test('testvcblockchain', vcblockchain_test)
+test('testrcpr', rcpr_test, dependencies: rcpr_test_dep)
 
 conf_data = configuration_data()
 conf_data.set('VERSION', meson.project_version())
