@@ -112,6 +112,7 @@ rcpr = rcpr_proj.dependency('rcpr')
 rcpr_lib = rcpr_proj.target('rcpr')
 rcpr_test = rcpr_proj.target('testrcpr')
 rcpr_test_dep = rcpr_proj.target('test')
+rcpr_include = rcpr_proj.include_directories('rcpr')
 
 objects = [
   rcpr_lib.extract_all_objects(),
@@ -142,6 +143,7 @@ vcblockchain_include = include_directories('include')
 config_include = include_directories('.')
 
 vcblockchain_include_directories = [
+  rcpr_include,
   vcmodel_include,
   vcblockchain_include,
   vpr_include,
