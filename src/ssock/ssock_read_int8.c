@@ -32,8 +32,6 @@
 int ssock_read_int8(ssock* sock, int8_t* val)
 {
     uint32_t type = 0U;
-    uint32_t nsize = 0U;
-    uint32_t size = 0U;
     int8_t nval = 0U;
 
     /* parameter sanity checks. */
@@ -57,22 +55,6 @@ int ssock_read_int8(ssock* sock, int8_t* val)
     if (SSOCK_DATA_TYPE_INT8 != ntohl(type))
     {
         return VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_TYPE;
-    }
-
-    /* attempt to read the size. */
-    size_t nsize_size = sizeof(nsize);
-    if (VCBLOCKCHAIN_STATUS_SUCCESS != ssock_read(sock, &nsize, &nsize_size) || sizeof(nsize) != nsize_size)
-    {
-        return VCBLOCKCHAIN_ERROR_SSOCK_READ;
-    }
-
-    /* convert the size to host byte order. */
-    size = vcntohl(nsize);
-
-    /* verify the size. */
-    if (sizeof(int8_t) != size)
-    {
-        return VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_SIZE;
     }
 
     /* attempt to read the value. */
