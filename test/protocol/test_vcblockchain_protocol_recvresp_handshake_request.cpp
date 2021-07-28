@@ -218,13 +218,14 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
         dummy_ssock_init(
             &sock,
             [&](ssock*, void* buffer, size_t* size) -> int {
+                uint32_t type = ntohl(SSOCK_DATA_TYPE_DATA_PACKET);
                 switch (state)
                 {
                     /* read the type. */
                     case 0:
-                        if (*size != sizeof(uint8_t))
+                        if (*size != sizeof(uint32_t))
                             return VCBLOCKCHAIN_ERROR_SSOCK_READ;
-                        *((uint8_t*)buffer) = SSOCK_DATA_TYPE_DATA_PACKET;
+                        memcpy(buffer, &type, sizeof(type));
                         ++state;
                         return VCBLOCKCHAIN_STATUS_SUCCESS;
 

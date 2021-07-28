@@ -3,7 +3,7 @@
  *
  * \brief Write an authenticated data packet to a socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -37,7 +37,7 @@ int ssock_write_authed_data(
     ssock* sock, uint64_t iv, const void* val, uint32_t size,
     vccrypt_suite_options_t* suite, vccrypt_buffer_t* secret)
 {
-    uint8_t type = SSOCK_DATA_TYPE_AUTHED_PACKET;
+    uint32_t type = htonl(SSOCK_DATA_TYPE_AUTHED_PACKET);
     uint32_t nsize = htonl(size);
     int retval = 0;
 

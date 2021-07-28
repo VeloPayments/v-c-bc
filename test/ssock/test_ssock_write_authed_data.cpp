@@ -3,7 +3,7 @@
  *
  * Unit tests for ssock_write_authed_data.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -173,7 +173,7 @@ TEST(test_ssock_write_authed_data, happy_path)
                 {
                     /* header read. */
                     case 0:
-                        if (*sz != 37)
+                        if (*sz != 40)
                             return VCBLOCKCHAIN_ERROR_SSOCK_READ;
                         memcpy(b, captured_val, *sz);
                         ++state;
@@ -183,7 +183,7 @@ TEST(test_ssock_write_authed_data, happy_path)
                     case 1:
                         if (*sz != sizeof(EXPECTED_PAYLOAD))
                             return VCBLOCKCHAIN_ERROR_SSOCK_READ;
-                        memcpy(b, captured_val + 37, *sz);
+                        memcpy(b, captured_val + 40, *sz);
                         ++state;
                         return VCBLOCKCHAIN_STATUS_SUCCESS;
 

@@ -21,17 +21,23 @@ extern "C" {
 typedef struct ssock ssock;
 
 /* packet types. */
-#define SSOCK_DATA_TYPE_BOM 0x00
-#define SSOCK_DATA_TYPE_UINT8 0x01
-#define SSOCK_DATA_TYPE_UINT32 0x03
-#define SSOCK_DATA_TYPE_UINT64 0x04
-#define SSOCK_DATA_TYPE_INT8 0x09
-#define SSOCK_DATA_TYPE_INT32 0x0A
-#define SSOCK_DATA_TYPE_INT64 0x0B
-#define SSOCK_DATA_TYPE_STRING 0x10
-#define SSOCK_DATA_TYPE_DATA_PACKET 0x20
-#define SSOCK_DATA_TYPE_AUTHED_PACKET 0x30
-#define SSOCK_DATA_TYPE_EOM 0xFF
+enum ssock_data_type
+{
+    SSOCK_DATA_TYPE_BOM                             = 0x00000000,
+    SSOCK_DATA_TYPE_INT64                           = 0x00000010,
+    SSOCK_DATA_TYPE_UINT64                          = 0x00000011,
+    SSOCK_DATA_TYPE_INT32                           = 0x00000012,
+    SSOCK_DATA_TYPE_UINT32                          = 0x00000013,
+    SSOCK_DATA_TYPE_INT16                           = 0x00000014,
+    SSOCK_DATA_TYPE_UINT16                          = 0x00000015,
+    SSOCK_DATA_TYPE_INT8                            = 0x00000016,
+    SSOCK_DATA_TYPE_UINT8                           = 0x00000017,
+    SSOCK_DATA_TYPE_BOOL                            = 0x00000018,
+    SSOCK_DATA_TYPE_STRING                          = 0x00000020,
+    SSOCK_DATA_TYPE_DATA_PACKET                     = 0x00000022,
+    SSOCK_DATA_TYPE_AUTHED_PACKET                   = 0x00000030,
+    SSOCK_DATA_TYPE_EOM                             = 0x000000FF,
+};
 
 /**
  * \brief Read method for ssock.

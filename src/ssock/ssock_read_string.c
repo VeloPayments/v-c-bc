@@ -3,9 +3,10 @@
  *
  * \brief Read a string packet from a socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <vcblockchain/byteswap.h>
 #include <vcblockchain/error_codes.h>
@@ -36,7 +37,7 @@
  */
 int ssock_read_string(ssock* sock, allocator_options_t* alloc_opts, char** val)
 {
-    uint8_t type = 0U;
+    uint32_t type = 0U;
     uint32_t nsize = 0U;
     uint32_t size = 0U;
 
@@ -59,7 +60,7 @@ int ssock_read_string(ssock* sock, allocator_options_t* alloc_opts, char** val)
     }
 
     /* verify that the type is SSOCK_DATA_TYPE_STRING. */
-    if (SSOCK_DATA_TYPE_STRING != type)
+    if (SSOCK_DATA_TYPE_STRING != ntohl(type))
     {
         return VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_TYPE;
     }

@@ -3,7 +3,7 @@
  *
  * Unit tests for ssock_read_authed_data.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -159,10 +159,10 @@ TEST(test_ssock_read_authed_data, happy_path)
 
     /* compute header size. */
     size_t header_size =
-          sizeof(uint8_t)
+          sizeof(uint32_t)
         + sizeof(uint32_t);
     size_t encrypted_header_size =
-          sizeof(uint8_t)
+          sizeof(uint32_t)
         + sizeof(uint32_t)
         + suite.mac_short_opts.mac_size;
 
@@ -178,7 +178,9 @@ TEST(test_ssock_read_authed_data, happy_path)
 
     /* populate header buffer. */
     uint8_t* pheader = (uint8_t*)header.data;
-    *pheader = SSOCK_DATA_TYPE_AUTHED_PACKET; ++pheader;
+    uint32_t net_payload_type = ntohl(SSOCK_DATA_TYPE_AUTHED_PACKET);
+    memcpy(pheader, &net_payload_type, sizeof(net_payload_type));
+    pheader += sizeof(net_payload_type);
     uint32_t payload_size = sizeof(EXPECTED_PAYLOAD);
     uint32_t net_payload_size = htonl(payload_size);
     memcpy(pheader, &net_payload_size, sizeof(net_payload_size));

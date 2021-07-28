@@ -3,9 +3,10 @@
  *
  * \brief Write an 8-bit integer value packet to a socket
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <vcblockchain/byteswap.h>
 #include <vcblockchain/ssock.h>
@@ -34,7 +35,7 @@ int ssock_write_int8(ssock* sock, int8_t val)
         return VCBLOCKCHAIN_ERROR_INVALID_ARG;
     }
 
-    uint8_t typeval = SSOCK_DATA_TYPE_UINT8;
+    uint32_t typeval = htonl(SSOCK_DATA_TYPE_UINT8);
 
     /* attempt to write the type to the socket. */
     size_t typeval_size = sizeof(typeval);

@@ -3,7 +3,7 @@
  *
  * \brief Read an authenticated data packet from a socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -49,7 +49,7 @@ int ssock_read_authed_data(
     vccrypt_buffer_t* secret)
 {
     int retval = 0;
-    uint8_t type = 0U;
+    uint32_t type = 0U;
     uint32_t nsize = 0U;
 
     /* parameter sanity checks. */
@@ -142,15 +142,15 @@ int ssock_read_authed_data(
     }
 
     /* verify that the type is SSOCK_DATA_TYPE_AUTHED_PACKET. */
-    type = dheader[0];
-    if (SSOCK_DATA_TYPE_AUTHED_PACKET != type)
+    memcpy(&type, dheader, sizeof(type));
+    if (SSOCK_DATA_TYPE_AUTHED_PACKET != ntohl(type))
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_UNAUTHORIZED_PACKET;
         goto cleanup_mac;
     }
 
     /* verify that the size makes sense. */
-    memcpy(&nsize, dheader + 1, sizeof(nsize));
+    memcpy(&nsize, dheader + sizeof(type), sizeof(nsize));
     *size = ntohl(nsize);
     if (*size > 10ULL * 1024ULL * 1024ULL /* 10 MB */)
     {
