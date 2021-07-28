@@ -3,10 +3,11 @@
  *
  * Unit tests for ssock_read_uint64.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <algorithm>
+#include <arpa/inet.h>
 #include <gtest/gtest.h>
 #include <list>
 #include <memory>
@@ -80,7 +81,10 @@ TEST(test_ssock_read_uint64, happy_path)
 
     /* create a buffer for the type. */
     auto b1 = make_shared<vector<uint8_t>>();
-    b1->push_back(SSOCK_DATA_TYPE_UINT64);
+    b1->push_back(0);
+    b1->push_back(0);
+    b1->push_back(0);
+    b1->push_back((uint8_t)(SSOCK_DATA_TYPE_UINT64 & 0x000000FF));
     io_buf.push_back(b1);
 
     /* create a buffer for the size. */
@@ -105,7 +109,7 @@ TEST(test_ssock_read_uint64, happy_path)
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
         ssock_read_uint64(&sock, &val));
 
-    /* the int32_t value should be equal to our expected value. */
+    /* the uint64_t value should be equal to our expected value. */
     EXPECT_EQ(EXPECTED_VAL, val);
 
     /* clean up */

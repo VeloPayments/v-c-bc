@@ -3,9 +3,10 @@
  *
  * Unit tests for ssock_write_uint64.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <vcblockchain/byteswap.h>
@@ -79,8 +80,10 @@ TEST(test_ssock_write_uint64, happy_path)
     EXPECT_EQ(&sock, write_calls[0]->sock);
 
     /* the first buffer contains the data type. */
-    ASSERT_EQ(sizeof(uint8_t), write_calls[0]->buf.size());
-    EXPECT_EQ(SSOCK_DATA_TYPE_UINT64, write_calls[0]->buf[0]);
+    ASSERT_EQ(sizeof(uint32_t), write_calls[0]->buf.size());
+    uint32_t net_type;
+    memcpy(&net_type, &write_calls[0]->buf[0], sizeof(net_type));
+    EXPECT_EQ(SSOCK_DATA_TYPE_UINT64, ntohl(net_type));
 
     /* the second buffer contains the size. */
     ASSERT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());

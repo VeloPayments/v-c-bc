@@ -3,9 +3,10 @@
  *
  * \brief Read a uint8 value packet from a socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <vcblockchain/byteswap.h>
 #include <vcblockchain/error_codes.h>
@@ -30,7 +31,7 @@
  */
 int ssock_read_uint8(ssock* sock, uint8_t* val)
 {
-    uint8_t type = 0U;
+    uint32_t type = 0U;
     uint32_t nsize = 0U;
     uint32_t size = 0U;
     uint8_t nval = 0U;
@@ -53,7 +54,7 @@ int ssock_read_uint8(ssock* sock, uint8_t* val)
     }
 
     /* verify that the type is SSOCK_DATA_TYPE_UINT8. */
-    if (SSOCK_DATA_TYPE_UINT8 != type)
+    if (SSOCK_DATA_TYPE_UINT8 != ntohl(type))
     {
         return VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_TYPE;
     }

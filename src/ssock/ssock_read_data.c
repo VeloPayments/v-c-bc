@@ -3,9 +3,10 @@
  *
  * \brief Read a data packet from a socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <vcblockchain/byteswap.h>
 #include <vcblockchain/error_codes.h>
@@ -48,7 +49,7 @@ int ssock_read_data(
         return VCBLOCKCHAIN_ERROR_INVALID_ARG;
     }
 
-    uint8_t type = 0U;
+    uint32_t type = 0U;
     uint32_t nsize = 0U;
 
     /* attempt to read the type info. */
@@ -59,7 +60,7 @@ int ssock_read_data(
     }
 
     /* verify that the type is IPC_DATA_TYPE_DATA_PACKET. */
-    if (SSOCK_DATA_TYPE_DATA_PACKET != type)
+    if (SSOCK_DATA_TYPE_DATA_PACKET != ntohl(type))
     {
         return VCBLOCKCHAIN_ERROR_SSOCK_READ_UNEXPECTED_DATA_TYPE;
     }

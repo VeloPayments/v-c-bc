@@ -3,7 +3,7 @@
  *
  * Unit tests for ssock_read_data.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <algorithm>
@@ -97,7 +97,10 @@ TEST(test_ssock_read_data, happy_path)
 
     /* create a buffer for the type. */
     auto b1 = make_shared<vector<uint8_t>>();
-    b1->push_back(SSOCK_DATA_TYPE_DATA_PACKET);
+    b1->push_back(0);
+    b1->push_back(0);
+    b1->push_back(0);
+    b1->push_back((uint8_t)(SSOCK_DATA_TYPE_DATA_PACKET & 0x000000FF));
     io_buf.push_back(b1);
 
     /* create a buffer for the size. */

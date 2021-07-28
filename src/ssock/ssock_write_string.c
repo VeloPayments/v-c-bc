@@ -3,9 +3,10 @@
  *
  * \brief Write a string packet to a socket
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <string.h>
 #include <vcblockchain/byteswap.h>
@@ -37,7 +38,7 @@ int ssock_write_string(ssock* sock, const char* val)
         return VCBLOCKCHAIN_ERROR_INVALID_ARG;
     }
 
-    uint8_t typeval = SSOCK_DATA_TYPE_STRING;
+    uint32_t typeval = htonl(SSOCK_DATA_TYPE_STRING);
 
     /* attempt to write the type to the socket. */
     size_t typeval_size = sizeof(typeval);
