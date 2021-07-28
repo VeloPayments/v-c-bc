@@ -86,21 +86,13 @@ TEST(test_ssock_read_int64, happy_path)
     b1->push_back((uint8_t)(SSOCK_DATA_TYPE_INT64 & 0x000000FF));
     io_buf.push_back(b1);
 
-    /* create a buffer for the size. */
-    auto b2 = make_shared<vector<uint8_t>>();
-    b2->push_back(0);
-    b2->push_back(0);
-    b2->push_back(0);
-    b2->push_back(8);
-    io_buf.push_back(b2);
-
     /* create a buffer for the int64 value. */
-    auto b3 = make_shared<vector<uint8_t>>();
+    auto b2 = make_shared<vector<uint8_t>>();
     int64_t nval = htonll(EXPECTED_VAL);
     uint8_t buf[8];
     memcpy(buf, &nval, 8);
-    copy(buf, buf + 8, back_inserter(*b3));
-    io_buf.push_back(b3);
+    copy(buf, buf + 8, back_inserter(*b2));
+    io_buf.push_back(b2);
 
     int64_t val = 0U;
 

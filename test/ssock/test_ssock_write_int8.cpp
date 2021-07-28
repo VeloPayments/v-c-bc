@@ -71,8 +71,8 @@ TEST(test_ssock_write_int8, happy_path)
     /* writing a data packet should succeed. */
     EXPECT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS, ssock_write_int8(&sock, val));
 
-    /* the internal write method should have been called three times. */
-    ASSERT_EQ(3U, write_calls.size());
+    /* the internal write method should have been called two times. */
+    ASSERT_EQ(2U, write_calls.size());
 
     /* the socket is the first argument. */
     EXPECT_EQ(&sock, write_calls[0]->sock);
@@ -81,18 +81,12 @@ TEST(test_ssock_write_int8, happy_path)
     ASSERT_EQ(sizeof(uint32_t), write_calls[0]->buf.size());
     uint32_t net_type;
     memcpy(&net_type, &write_calls[0]->buf[0], sizeof(net_type));
-    EXPECT_EQ(SSOCK_DATA_TYPE_UINT8, ntohl(net_type));
+    EXPECT_EQ(SSOCK_DATA_TYPE_INT8, ntohl(net_type));
 
-    /* the second buffer contains the size. */
-    ASSERT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());
-    uint32_t net_size;
-    memcpy(&net_size, &write_calls[1]->buf[0], sizeof(net_size));
-    EXPECT_EQ(sizeof(val), (size_t)vcntohl(net_size));
-
-    /* the third buffer contains the data. */
-    ASSERT_EQ(sizeof(val), write_calls[2]->buf.size());
+    /* the second buffer contains the data. */
+    ASSERT_EQ(sizeof(val), write_calls[1]->buf.size());
     int8_t v2;
-    memcpy(&v2, &write_calls[2]->buf[0], sizeof(v2));
+    memcpy(&v2, &write_calls[1]->buf[0], sizeof(v2));
     EXPECT_EQ(val, v2);
 
     /* clean up */

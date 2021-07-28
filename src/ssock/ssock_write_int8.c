@@ -35,21 +35,13 @@ int ssock_write_int8(ssock* sock, int8_t val)
         return VCBLOCKCHAIN_ERROR_INVALID_ARG;
     }
 
-    uint32_t typeval = htonl(SSOCK_DATA_TYPE_UINT8);
+    uint32_t typeval = htonl(SSOCK_DATA_TYPE_INT8);
 
     /* attempt to write the type to the socket. */
     size_t typeval_size = sizeof(typeval);
     if (VCBLOCKCHAIN_STATUS_SUCCESS !=
             ssock_write(sock, &typeval, &typeval_size) ||
         sizeof(typeval) != typeval_size)
-    {
-        return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
-    }
-
-    /* attempt to write the length of this value to the socket. */
-    uint32_t hlen = vchtonl(sizeof(val));
-    size_t hlen_size = sizeof(hlen);
-    if (VCBLOCKCHAIN_STATUS_SUCCESS != ssock_write(sock, &hlen, &hlen_size) || sizeof(hlen) != hlen_size)
     {
         return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
     }
