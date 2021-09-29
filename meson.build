@@ -92,18 +92,6 @@ lmdb_lib = lmdb_sub.get_variable('lmdb')
 
 cmake = import('cmake')
 
-if meson.is_cross_build()
-  event_sub = disabler()
-  event = disabler()
-  message('libevent disabled for cross build!')
-else
-  event_sub = cmake.subproject('libevent', cmake_options: ['-DEVENT__DISABLE_OPENSSL=ON', '-DEVENT__DISABLE_MBEDTLS=ON', '-DEVENT__LIBRARY_TYPE=STATIC'])
-  event = event_sub.dependency('event')
-endif
-
-event_lib = event_sub.target('event_static')
-event_include = event_sub.include_directories('event_static')
-
 minunit_proj = cmake.subproject('minunit')
 minunit = minunit_proj.dependency('minunit')
 
@@ -125,18 +113,10 @@ if lmdb_sub.found()
   objects += [lmdb_lib.extract_all_objects()]
 endif
 
-if event_sub.found()
-  objects += [event_lib.extract_all_objects()]
-endif
-
 vcblockchain_lib_deps = [rcpr, vcmodel, vpr, vccert, vccrypt]
 
 if lmdb.found()
   vcblockchain_lib_deps += [lmdb]
-endif
-
-if event.found()
-  vcblockchain_lib_deps += [event]
 endif
 
 vcblockchain_include = include_directories('include')
@@ -153,10 +133,6 @@ vcblockchain_include_directories = [
 
 if lmdb_sub.found()
   vcblockchain_include_directories += [lmdb_include]
-endif
-
-if event_sub.found()
-  vcblockchain_include_directories += [event_include]
 endif
 
 vcblockchain_lib = static_library('vcblockchain', src,
