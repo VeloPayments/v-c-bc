@@ -1,4 +1,0 @@
-[wrap-git]
-directory = libevent
-revision = 59e31c9667075ae960d59e0f78d8d9c6eb01765f
-url = https://github.com/libevent/libevent.git
