@@ -148,7 +148,7 @@ int vcblockchain_entity_get_public_signing_key(
  *      - a non-zero error code on failure.
  */
 int vcblockchain_entity_get_artifact_id(
-    const RCPR_SYM(rcpr_uuid)** buf, const void* ent);
+    const RCPR_SYM(rcpr_uuid)** id, const void* ent);
 
 /**
  * \brief Get the private encryption key buffer for a private entity
