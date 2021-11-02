@@ -10,6 +10,7 @@
 #define VCBLOCKCHAIN_ENTITY_CERT_INTERNAL_HEADER_GUARD
 
 #include <vcblockchain/entity_cert.h>
+#include <vcblockchain/error_codes.h>
 #include <rcpr/resource/protected.h>
 
 /* make this header C++ friendly. */

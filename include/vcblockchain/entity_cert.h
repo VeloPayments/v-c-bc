@@ -165,7 +165,7 @@ int vcblockchain_entity_get_artifact_id(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_entity_private_cert_get_public_encryption_key(
+int vcblockchain_entity_private_cert_get_private_encryption_key(
     const vccrypt_buffer_t** buf, const vcblockchain_entity_private_cert* ent);
 
 /**
@@ -182,7 +182,7 @@ int vcblockchain_entity_private_cert_get_public_encryption_key(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_entity_private_cert_get_public_signing_key(
+int vcblockchain_entity_private_cert_get_private_signing_key(
     const vccrypt_buffer_t** buf, const vcblockchain_entity_private_cert* ent);
 
 /**
