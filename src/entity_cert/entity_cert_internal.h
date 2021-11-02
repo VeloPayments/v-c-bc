@@ -25,6 +25,7 @@ struct vcblockchain_entity_public_cert
 {
     RCPR_SYM(resource) hdr;
     RCPR_SYM(rcpr_uuid) artifact_id;
+    allocator_options_t* alloc_opts;
     vccrypt_buffer_t public_encryption_key;
     vccrypt_buffer_t public_signing_key;
 
