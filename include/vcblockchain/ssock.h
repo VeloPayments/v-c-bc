@@ -3,7 +3,7 @@
  *
  * \brief Simple socket abstraction for vcblockchain.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VCBLOCKCHAIN_SSOCK_HEADER_GUARD
@@ -37,6 +37,30 @@ extern "C" {
  *      - a non-zero error code on failure.
  */
 int ssock_init_from_posix(ssock* sock, int sd);
+
+/**
+ * \brief Initialize a client ssock instance from a server address and port.
+ *
+ * This instance is disposable and must be disposed by calling \ref dispose()
+ * when no longer needed.  Note that \ref dispose() will close the socket
+ * connection.
+ *
+ * \param sock              The ssock instance to initialize.
+ * \param hostaddr          The host address, which must either be an IP address
+ *                          or a DNS resolvable domain.
+ * \param port              The port for the connection.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - VCBLOCKCHAIN_ERROR_INVALID_ARG if one of the arguments is invalid.
+ *      - VCBLOCKCHAIN_ERROR_INVALID_ADDRESS if the address could not be
+ *        resolved.
+ *      - VCBLOCKCHAIN_ERROR_CONNECTION_REFUSED if the connection could not be
+ *        established.
+ *      - a non-zero error code on failure.
+ */
+int ssock_init_from_host_address(
+    ssock* sock, const char* hostaddr, unsigned int port);
 
 /**
  * \brief Read data from a ssock instance.
