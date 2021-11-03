@@ -46,8 +46,8 @@ int ssock_init_from_posix(ssock* sock, int sd);
  * connection.
  *
  * \param sock              The ssock instance to initialize.
- * \param hostaddr          The host address, which must either be an IP address
- *                          or a DNS resolvable domain.
+ * \param hostaddr          The host address, which must be a presentation IP
+ *                          address.
  * \param port              The port for the connection.
  *
  * \returns a status code indicating success or failure.
