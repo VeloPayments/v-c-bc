@@ -81,6 +81,21 @@ extern "C" {
 #define VCBLOCKCHAIN_ERROR_SSOCK_UNAUTHORIZED_PACKET 0x5109
 
 /**
+ * \brief An attempt to create a socket failed.
+ */
+#define VCBLOCKCHAIN_ERROR_SOCKET_CREATE_FAILED 0x510a
+
+/**
+ * \brief An attempt to connect to a remote socket failed.
+ */
+#define VCBLOCKCHAIN_ERROR_CONNECTION_REFUSED 0x510b
+
+/**
+ * \brief An invalid or unresolvable address was encountered.
+ */
+#define VCBLOCKCHAIN_ERROR_INVALID_ADDRESS 0x510c
+
+/**
  * @}
  */
 
