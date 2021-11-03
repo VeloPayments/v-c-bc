@@ -83,7 +83,7 @@ int vcblockchain_protocol_sendreq_handshake_request(
 
     /* initialize challenge nonce buffer. */
     retval =
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             suite, challenge_nonce);
     if (VCCRYPT_STATUS_SUCCESS != retval)
     {
@@ -109,7 +109,7 @@ int vcblockchain_protocol_sendreq_handshake_request(
 
     /* write data packet with request payload to socket. */
     size_t write_size = payload.size;
-    retval = ssock_write(sock, payload.data, &write_size);
+    retval = ssock_write_data(sock, payload.data, write_size);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
         goto cleanup_payload;

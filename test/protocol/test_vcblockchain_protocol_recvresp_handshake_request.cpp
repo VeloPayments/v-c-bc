@@ -120,7 +120,7 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
     /* create client challenge nonce buffer. */
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             &suite, &client_challenge_nonce));
 
     /* create client challenge nonce. */
@@ -144,7 +144,7 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
     /* create server challenge nonce buffer. */
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             &suite, &server_challenge_nonce));
 
     /* create server challenge nonce. */

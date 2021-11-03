@@ -75,13 +75,21 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     ASSERT_EQ(suite.key_cipher_opts.minimum_nonce_size, client_key_nonce.size);
     ASSERT_NE(nullptr, client_challenge_nonce.data);
     ASSERT_EQ(
-        suite.key_auth_opts.minimum_nonce_size, client_challenge_nonce.size);
+        suite.key_cipher_opts.minimum_nonce_size, client_challenge_nonce.size);
 
     /* sock write should have been called once. */
-    ASSERT_EQ(1U, write_calls.size());
+    ASSERT_EQ(3U, write_calls.size());
+
+    /* first call is the type. */
+    EXPECT_EQ(&sock, write_calls[0]->sock);
+    EXPECT_EQ(sizeof(uint32_t), write_calls[0]->buf.size());
+
+    /* second call is the size. */
+    EXPECT_EQ(&sock, write_calls[1]->sock);
+    EXPECT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());
 
     /* the socket is the first argument. */
-    EXPECT_EQ(&sock, write_calls[0]->sock);
+    EXPECT_EQ(&sock, write_calls[2]->sock);
 
     /* compute the size of the request packet payload. */
     size_t expected_payload_size =
@@ -94,7 +102,7 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
         + client_challenge_nonce.size; /* challenge nonce size */
 
     /* the buffer written was the correct size for the payload. */
-    EXPECT_EQ(expected_payload_size, write_calls[0]->buf.size());
+    EXPECT_EQ(expected_payload_size, write_calls[2]->buf.size());
 
     /* clean up. */
     dispose((disposable_t*)&client_key_nonce);

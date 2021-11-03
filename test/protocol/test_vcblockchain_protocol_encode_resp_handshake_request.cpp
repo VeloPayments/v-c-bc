@@ -63,7 +63,7 @@ TEST(test_vcblockchain_protocol_encode_resp_handshake_request, basics)
     /* create a buffer for holding the challenge nonce. */
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             &suite, &server_challenge_nonce));
     /* set the challenge nonce. */
     memset(server_challenge_nonce.data, 0xEC, server_challenge_nonce.size);

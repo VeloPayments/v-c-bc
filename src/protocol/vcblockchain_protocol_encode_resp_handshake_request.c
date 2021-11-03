@@ -63,7 +63,7 @@ int vcblockchain_protocol_encode_resp_handshake_request(
     /* verify buffer sizes. */
     if (server_public_key->size != suite->key_cipher_opts.public_key_size
      || server_key_nonce->size != suite->key_cipher_opts.minimum_nonce_size
-     || server_challenge_nonce->size != suite->key_auth_opts.minimum_nonce_size
+     || server_challenge_nonce->size != suite->key_cipher_opts.minimum_nonce_size
      || server_cr_hmac->size != suite->mac_short_opts.mac_size)
     {
         retval = VCBLOCKCHAIN_ERROR_INVALID_ARG;
