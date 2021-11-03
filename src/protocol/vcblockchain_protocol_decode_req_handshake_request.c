@@ -53,7 +53,7 @@ int vcblockchain_protocol_decode_req_handshake_request(
         + sizeof(net_crypto_suite)
         + sizeof(vpr_uuid)
         + suite->key_cipher_opts.minimum_nonce_size
-        + suite->key_auth_opts.minimum_nonce_size;
+        + suite->key_cipher_opts.minimum_nonce_size;
 
     /* verify that this size matches what we expect. */
     if (payload_size != expected_payload_size)
@@ -77,7 +77,7 @@ int vcblockchain_protocol_decode_req_handshake_request(
 
     /* allocate client_challenge_nonce buffer. */
     retval =
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             suite, &req->client_challenge_nonce);
     if (VCCRYPT_STATUS_SUCCESS != retval)
     {

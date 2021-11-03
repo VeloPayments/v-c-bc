@@ -53,7 +53,7 @@ int vcblockchain_protocol_encode_req_handshake_request(
 
     /* verify the nonce sizes. */
     if (client_key_nonce->size != suite->key_cipher_opts.minimum_nonce_size
-     || client_challenge_nonce->size != suite->key_auth_opts.minimum_nonce_size)
+     || client_challenge_nonce->size != suite->key_cipher_opts.minimum_nonce_size)
     {
         retval = VCBLOCKCHAIN_ERROR_INVALID_ARG;
         goto done;

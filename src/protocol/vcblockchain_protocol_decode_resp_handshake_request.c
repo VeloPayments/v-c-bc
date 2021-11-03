@@ -61,7 +61,7 @@ int vcblockchain_protocol_decode_resp_handshake_request(
         + sizeof(vpr_uuid)
         + suite->key_cipher_opts.public_key_size
         + suite->key_cipher_opts.minimum_nonce_size
-        + suite->key_auth_opts.minimum_nonce_size
+        + suite->key_cipher_opts.minimum_nonce_size
         + suite->mac_short_opts.mac_size;
 
     /* clear the response structure. */
@@ -166,7 +166,7 @@ int vcblockchain_protocol_decode_resp_handshake_request(
 
     /* allocate the server challenge nonce. */
     retval =
-        vccrypt_suite_buffer_init_for_auth_key_agreement_nonce(
+        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
             suite, &resp->server_challenge_nonce);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
