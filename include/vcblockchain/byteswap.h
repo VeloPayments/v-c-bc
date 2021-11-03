@@ -33,6 +33,7 @@ extern "C" {
 #define VCBLOCKCHAIN_LITTLE_ENDIAN
 #endif
 
+#ifndef VCBLOCKCHAIN_VCBSWAP_32_IMPL
 /**
  * \brief Swap the endian representation of a given 32-bit value.
  *
@@ -50,6 +51,7 @@ inline int32_t vcbswap_32(int32_t val)
       | ((v & 0x0000FF00) << 8)
       | ((v & 0x000000FF) << 24);
 }
+#endif /*VCBLOCKCHAIN_VCBSWAP_32_IMPL*/
 
 /**
  * \brief Swap the endian representation of a given 64-bit value.
@@ -60,6 +62,7 @@ inline int32_t vcbswap_32(int32_t val)
  */
 int64_t bswap_64(int64_t val);
 
+#if !defined(VCBLOCKCHAIN_VCHTONL_IMPL) && !defined(VCBLOCKCHAIN_VCBSWAP_32_IMPL)
 /**
  * \brief Perform a host to network byte order swap operation.
  *
@@ -75,7 +78,9 @@ inline int32_t vchtonl(int32_t val)
     return val;
 #endif
 }
+#endif /*VCBLOCKCHAIN_VCHTONL_IMPL*/
 
+#if !defined(VCBLOCKCHAIN_VCNTOHL_IMPL) && !defined(VCBLOCKCHAIN_VCBSWAP_32_IMPL)
 /**
  * \brief Perform a network to host byte order swap operation.
  *
@@ -91,6 +96,7 @@ inline int32_t vcntohl(int32_t val)
     return val;
 #endif
 }
+#endif /*VCBLOCKCHAIN_VCNTOHL_IMPL*/
 
 /**
  * \brief Perform a host to network byte order swap operation.
