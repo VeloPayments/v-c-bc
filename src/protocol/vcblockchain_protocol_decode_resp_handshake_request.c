@@ -90,18 +90,20 @@ int vcblockchain_protocol_decode_resp_handshake_request(
         goto cleanup_resp;
     }
 
+    /* read the status. */
+    memcpy(&net_status, buf, sizeof(net_status));
+    resp->status = ntohl(net_status);
+    buf += sizeof(net_status);
+
     /* read the request offset. */
     memcpy(&net_offset, buf, sizeof(net_offset));
     resp->offset = ntohl(net_offset);
     buf += sizeof(net_offset);
 
-    /* read the status. */
-    memcpy(&net_status, buf, sizeof(net_status));
-    resp->status = ntohl(net_status);
-    buf += sizeof(net_status);
+    /* exit early if the status is not success. */
     if (VCBLOCKCHAIN_STATUS_SUCCESS != resp->status)
     {
-        retval = VCBLOCKCHAIN_STATUS_SUCCESS;
+        retval = resp->status;
         goto cleanup_resp;
     }
 
