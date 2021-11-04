@@ -107,8 +107,8 @@ TEST(test_vcblockchain_protocol_response_decode_header, happy_path)
     /* set up the buffer. */
     uint32_t* u32buf = (uint32_t*)buffer.data;
     u32buf[0] = htonl(EXPECTED_REQUEST_ID);
-    u32buf[1] = htonl(EXPECTED_OFFSET);
-    u32buf[2] = htonl(EXPECTED_STATUS);
+    u32buf[1] = htonl(EXPECTED_STATUS);
+    u32buf[2] = htonl(EXPECTED_OFFSET);
 
     /* preconditions: header values are 0. */
     request_id = offset = status = 0;

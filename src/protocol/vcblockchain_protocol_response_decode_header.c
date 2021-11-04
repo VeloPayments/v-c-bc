@@ -58,8 +58,8 @@ int vcblockchain_protocol_response_decode_header(
     /* copy the header data. */
     const uint32_t* u32buf = (const uint32_t*)response->data;
     *request_id = ntohl(u32buf[0]);
-    *offset = ntohl(u32buf[1]);
-    *status = ntohl(u32buf[2]);
+    *status = ntohl(u32buf[1]);
+    *offset = ntohl(u32buf[2]);
 
     /* success. */
     return VCBLOCKCHAIN_STATUS_SUCCESS;
