@@ -103,19 +103,19 @@ TEST(test_vcblockchain_protocol_encode_resp_handshake_request, basics)
     EXPECT_EQ(PROTOCOL_REQ_ID_HANDSHAKE_INITIATE, ntohl(net_request));
     buf += sizeof(net_request); size -= sizeof(net_request);
 
-    /* then comes the offset. */
-    uint32_t net_offset;
-    ASSERT_GE(size, sizeof(net_offset));
-    memcpy(&net_offset, buf, sizeof(net_offset));
-    EXPECT_EQ(EXPECTED_OFFSET, ntohl(net_offset));
-    buf += sizeof(net_offset); size -= sizeof(net_offset);
-
     /* then comes the status. */
     uint32_t net_status;
     ASSERT_GE(size, sizeof(net_status));
     memcpy(&net_status, buf, sizeof(net_status));
     EXPECT_EQ(EXPECTED_STATUS, ntohl(net_status));
     buf += sizeof(net_status); size -= sizeof(net_status);
+
+    /* then comes the offset. */
+    uint32_t net_offset;
+    ASSERT_GE(size, sizeof(net_offset));
+    memcpy(&net_offset, buf, sizeof(net_offset));
+    EXPECT_EQ(EXPECTED_OFFSET, ntohl(net_offset));
+    buf += sizeof(net_offset); size -= sizeof(net_offset);
 
     /* then the protocol version. */
     uint32_t net_protocol_version;

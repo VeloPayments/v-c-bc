@@ -75,8 +75,8 @@ int vcblockchain_protocol_encode_resp_handshake_request(
     /* | DATA                                                | SIZE         | */
     /* | --------------------------------------------------- | ------------ | */
     /* | UNAUTH_PROTOCOL_REQ_ID_HANDSHAKE_INITIATE           |   4 bytes    | */
-    /* | offset                                              |   4 bytes    | */
     /* | status                                              |   4 bytes    | */
+    /* | offset                                              |   4 bytes    | */
     /* | record:                                             | 152 bytes    | */
     /* |    protocol_version                                 |   4 bytes    | */
     /* |    crypto_suite                                     |   4 bytes    | */
@@ -112,13 +112,13 @@ int vcblockchain_protocol_encode_resp_handshake_request(
     memcpy(buf, &net_request_id, sizeof(net_request_id));
     buf += sizeof(net_request_id);
 
-    /* write the offset to the buffer. */
-    memcpy(buf, &net_offset, sizeof(net_offset));
-    buf += sizeof(net_offset);
-
     /* write the status to the buffer. */
     memcpy(buf, &net_status, sizeof(net_status));
     buf += sizeof(net_status);
+
+    /* write the offset to the buffer. */
+    memcpy(buf, &net_offset, sizeof(net_offset));
+    buf += sizeof(net_offset);
 
     /* write the protocol version to the buffer. */
     memcpy(buf, &net_protocol_version, sizeof(net_protocol_version));
