@@ -56,8 +56,8 @@ int vcblockchain_protocol_decode_resp_latest_block_id_get(
     resp->hdr.dispose = &dispose_protocol_resp_latest_block_id_get;
     const uint32_t* parr = (const uint32_t*)payload;
     resp->request_id = ntohl(parr[0]);
-    resp->offset = ntohl(parr[1]);
-    resp->status = ntohl(parr[2]);
+    resp->status = ntohl(parr[1]);
+    resp->offset = ntohl(parr[2]);
     memcpy(&resp->block_id, &(parr[3]), sizeof(resp->block_id));
 
     /* success. */
