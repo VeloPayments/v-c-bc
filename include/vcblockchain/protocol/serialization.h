@@ -3,7 +3,7 @@
  *
  * \brief Serialization methods for the blockchain protocol.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VCBLOCKCHAIN_PROTOCOL_SERIALIZATION_HEADER_GUARD
@@ -539,6 +539,27 @@ int vcblockchain_protocol_encode_resp_block_next_id_get(
 int vcblockchain_protocol_decode_resp_block_next_id_get(
     protocol_resp_block_next_id_get* resp, const void* payload,
     size_t payload_size);
+
+/**
+ * \brief Encode a block prev id get request.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded request packet.
+ * \param alloc_opts                The allocator to use for this request.
+ * \param offset                    The offset to use for this request.
+ * \param block_id                  The id of block to get.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_block_prev_id_get(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, const vpr_uuid* block_id);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
