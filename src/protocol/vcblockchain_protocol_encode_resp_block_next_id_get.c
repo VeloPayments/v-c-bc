@@ -57,8 +57,8 @@ int vcblockchain_protocol_encode_resp_block_next_id_get(
     /* populate the integer values. */
     uint32_t* uarr = (uint32_t*)buffer->data;
     uarr[0] = htonl(PROTOCOL_REQ_ID_BLOCK_ID_GET_NEXT);
-    uarr[1] = htonl(offset);
-    uarr[2] = htonl(status);
+    uarr[1] = htonl(status);
+    uarr[2] = htonl(offset);
     memcpy(&(uarr[3]), next_block_id, sizeof(vpr_uuid));
 
     /* success. */
