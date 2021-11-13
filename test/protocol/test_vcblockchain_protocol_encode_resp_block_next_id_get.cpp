@@ -83,8 +83,8 @@ TEST(test_vcblockchain_protocol_encode_resp_block_next_id_get, happy_path)
     /* check the integer values. */
     uint32_t* uarr = (uint32_t*)buffer.data;
     EXPECT_EQ(htonl(PROTOCOL_REQ_ID_BLOCK_ID_GET_NEXT), uarr[0]);
-    EXPECT_EQ(htonl(EXPECTED_OFFSET), uarr[1]);
-    EXPECT_EQ(htonl(EXPECTED_STATUS), uarr[2]);
+    EXPECT_EQ(htonl(EXPECTED_STATUS), uarr[1]);
+    EXPECT_EQ(htonl(EXPECTED_OFFSET), uarr[2]);
 
     /* check the uuid. */
     uint8_t* barr = (uint8_t*)buffer.data;
