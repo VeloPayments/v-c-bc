@@ -70,8 +70,8 @@ int vcblockchain_protocol_encode_resp_handshake_ack(
     /* write the values to the buffer. */
     uint32_t* buf = (uint32_t*)buffer->data;
     buf[0] = net_request_id;
-    buf[1] = net_offset;
-    buf[2] = net_status;
+    buf[1] = net_status;
+    buf[2] = net_offset;
 
     /* success. */
     /* caller owns buffer on success and must dispose it. */

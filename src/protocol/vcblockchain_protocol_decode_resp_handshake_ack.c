@@ -55,8 +55,8 @@ int vcblockchain_protocol_decode_resp_handshake_ack(
     memset(resp, 0, sizeof(*resp));
     resp->hdr.dispose = &dispose_protocol_resp_handshake_ack;
     resp->request_id = ntohl(valarray[0]);
-    resp->offset = ntohl(valarray[1]);
-    resp->status = ntohl(valarray[2]);
+    resp->status = ntohl(valarray[1]);
+    resp->offset = ntohl(valarray[2]);
 
     /* success. */
     return VCBLOCKCHAIN_STATUS_SUCCESS;
