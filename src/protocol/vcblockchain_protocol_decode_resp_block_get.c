@@ -73,8 +73,8 @@ int vcblockchain_protocol_decode_resp_block_get(
     /* set the integer values. */
     const uint32_t* uarr = (const uint32_t*)payload;
     resp->request_id = vcntohl(uarr[0]);
-    resp->offset = vcntohl(uarr[1]);
-    resp->status = vcntohl(uarr[2]);
+    resp->status = vcntohl(uarr[1]);
+    resp->offset = vcntohl(uarr[2]);
 
     /* set the uuid values. */
     const uint8_t* barr = (const uint8_t*)(uarr + 3);
