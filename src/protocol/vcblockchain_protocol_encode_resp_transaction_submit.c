@@ -54,8 +54,8 @@ int vcblockchain_protocol_encode_resp_transaction_submit(
     /* set the integer values for this response. */
     uint32_t* u32arr = (uint32_t*)buffer->data;
     u32arr[0] = htonl(PROTOCOL_REQ_ID_TRANSACTION_SUBMIT);
-    u32arr[1] = htonl(offset);
-    u32arr[2] = htonl(status);
+    u32arr[1] = htonl(status);
+    u32arr[2] = htonl(offset);
 
     /* success. */
     /* on success, the caller owns the buffer. */
