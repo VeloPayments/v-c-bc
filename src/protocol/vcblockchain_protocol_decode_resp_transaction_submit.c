@@ -56,8 +56,8 @@ int vcblockchain_protocol_decode_resp_transaction_submit(
     resp->hdr.dispose = &dispose_protocol_resp_transaction_submit;
     const uint32_t* u32arr = (const uint32_t*)payload;
     resp->request_id = ntohl(u32arr[0]);
-    resp->offset = ntohl(u32arr[1]);
-    resp->status = ntohl(u32arr[2]);
+    resp->status = ntohl(u32arr[1]);
+    resp->offset = ntohl(u32arr[2]);
 
     /* success. */
     return VCBLOCKCHAIN_STATUS_SUCCESS;
