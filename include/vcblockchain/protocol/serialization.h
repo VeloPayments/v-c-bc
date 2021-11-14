@@ -863,6 +863,26 @@ int vcblockchain_protocol_encode_resp_txn_get(
     uint64_t ser_txn_cert_size, const void* txn_cert, size_t txn_cert_size,
     uint32_t txn_state);
 
+/**
+ * \brief Decode a transaction get response.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param alloc_opts                The allocator to use for this response.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_txn_get(
+    protocol_resp_txn_get* resp, allocator_options_t* alloc_opts,
+    const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
