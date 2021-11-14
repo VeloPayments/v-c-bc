@@ -3,7 +3,7 @@
  *
  * \brief Data for blockchain protocol.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VCBLOCKCHAIN_PROTOCOL_DATA_HEADER_GUARD
@@ -394,6 +394,38 @@ typedef struct protocol_req_txn_get
     /** \brief the transaction id. */
     vpr_uuid txn_id;
 } protocol_req_txn_get;
+
+/**
+ * \brief The decoded protocol response for the transaction get response.
+ */
+typedef struct protocol_resp_txn_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief the transaction id. */
+    vpr_uuid txn_id;
+    /** \brief the previous transaction id. */
+    vpr_uuid prev_txn_id;
+    /** \brief the next transaction id. */
+    vpr_uuid next_txn_id;
+    /** \brief the artifact id to which this transaction belongs. */
+    vpr_uuid artifact_id;
+    /** \brief the block id for the block in which this transaction was
+     * canonized. */
+    vpr_uuid block_id;
+    /** \brief the serialized transaction state. */
+    uint32_t txn_state;
+    /** \brief the serialized transaction size. */
+    uint64_t txn_size;
+    /** \brief the transaction certificate. */
+    vccrypt_buffer_t txn_cert;
+} protocol_resp_txn_get;
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
