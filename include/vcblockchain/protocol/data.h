@@ -362,6 +362,24 @@ typedef struct protocol_req_artifact_last_txn_id_get
     vpr_uuid artifact_id;
 } protocol_req_artifact_last_txn_id_get;
 
+/**
+ * \brief The decoded protocol response for the artifact last txn id get
+ * response.
+ */
+typedef struct protocol_resp_artifact_last_txn_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief the last transaction id. */
+    vpr_uuid last_txn_id;
+} protocol_resp_artifact_last_txn_id_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
