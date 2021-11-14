@@ -827,6 +827,42 @@ int vcblockchain_protocol_encode_req_txn_get(
 int vcblockchain_protocol_decode_req_txn_get(
     protocol_req_txn_get* req, const void* payload, size_t payload_size);
 
+/**
+ * \brief Encode a transaction get response using the given parameters.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded response.
+ * \param alloc_opts                The allocator options to use to allocate the
+ *                                  buffer.
+ * \param offset                    The offset for this response.
+ * \param status                    The status for this response.
+ * \param txn_id                    The transaction id.
+ * \param prev_txn_id               The previous transaction id.
+ * \param next_txn_id               The next transaction id.
+ * \param artifact_id               The artifact id for this transaction.
+ * \param block_id                  The block id for this transaction.
+ * \param ser_txn_cert_size         The serialized transaction cert size.
+ * \param txn_cert                  Pointer to the start of the transaction
+ *                                  certificate.
+ * \param txn_cert_size             The transaction cert size.
+ * \param txn_state                 The transaction state.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * response.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_txn_get(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t offset, uint32_t status, const vpr_uuid* txn_id,
+    const vpr_uuid* prev_txn_id, const vpr_uuid* next_txn_id,
+    const vpr_uuid* artifact_id, const vpr_uuid* block_id,
+    uint64_t ser_txn_cert_size, const void* txn_cert, size_t txn_cert_size,
+    uint32_t txn_state);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
