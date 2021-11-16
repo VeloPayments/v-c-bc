@@ -904,6 +904,25 @@ int vcblockchain_protocol_encode_req_block_id_by_height_get(
     vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
     uint32_t offset, uint64_t height);
 
+/**
+ * \brief Decode a block id by height get request.
+ *
+ * \param req                       The decoded request buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p req structure is initialized with the decoded values. The
+ * caller owns this structure and must \ref dispose() it when it is no longer
+ * needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_req_block_id_by_height_get(
+    protocol_req_block_id_by_height_get* req, const void* payload,
+    size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

@@ -427,6 +427,21 @@ typedef struct protocol_resp_txn_get
     vccrypt_buffer_t txn_cert;
 } protocol_resp_txn_get;
 
+/**
+ * \brief The decoded protocol request for the block id by height get request.
+ */
+typedef struct protocol_req_block_id_by_height_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the block height. */
+    uint64_t height;
+} protocol_req_block_id_by_height_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
