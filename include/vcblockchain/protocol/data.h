@@ -492,6 +492,21 @@ typedef struct protocol_resp_txn_next_id_get
     vpr_uuid next_txn_id;
 } protocol_resp_txn_next_id_get;
 
+/**
+ * \brief The decoded protocol request for the transaction prev id get request.
+ */
+typedef struct protocol_req_txn_prev_id_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the txn id. */
+    vpr_uuid txn_id;
+} protocol_req_txn_prev_id_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
