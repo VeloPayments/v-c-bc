@@ -1288,6 +1288,25 @@ int vcblockchain_protocol_encode_resp_status_get(
 int vcblockchain_protocol_decode_resp_status_get(
     protocol_resp_status_get* resp, const void* payload, size_t payload_size);
 
+/**
+ * \brief Encode a connection close request.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded request packet.
+ * \param alloc_opts                The allocator to use for this request.
+ * \param offset                    The offset to use for this request.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request.  The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_connection_close(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint32_t offset);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
