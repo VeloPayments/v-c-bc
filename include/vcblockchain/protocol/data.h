@@ -558,6 +558,19 @@ typedef struct protocol_resp_txn_block_id_get
     vpr_uuid block_id;
 } protocol_resp_txn_block_id_get;
 
+/**
+ * \brief The decoded protocol request for the status get request.
+ */
+typedef struct protocol_req_status_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+} protocol_req_status_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
