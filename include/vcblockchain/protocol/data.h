@@ -599,6 +599,21 @@ typedef struct protocol_req_connection_close
     uint32_t offset;
 } protocol_req_connection_close;
 
+/**
+ * \brief The decoded protocol response for the connection close response.
+ */
+typedef struct protocol_resp_connection_close
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_connection_close;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
