@@ -571,6 +571,21 @@ typedef struct protocol_req_status_get
     uint32_t offset;
 } protocol_req_status_get;
 
+/**
+ * \brief The decoded protocol response for the status get response.
+ */
+typedef struct protocol_resp_status_get
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_status_get;
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

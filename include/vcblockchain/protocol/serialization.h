@@ -1270,6 +1270,24 @@ int vcblockchain_protocol_encode_resp_status_get(
     vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
     uint32_t offset, uint32_t status);
 
+/**
+ * \brief Decode a status get response.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_status_get(
+    protocol_resp_status_get* resp, const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
