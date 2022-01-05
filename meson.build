@@ -153,7 +153,7 @@ vcblockchain_test = executable('testvcblockchain', test_src,
 )
 
 test('testvcblockchain', vcblockchain_test)
-test('testrcpr', rcpr_test, dependencies: rcpr_test_dep)
+test('testrcpr', rcpr_test, depends: rcpr_test_dep)
 
 conf_data = configuration_data()
 conf_data.set('VERSION', meson.project_version())
