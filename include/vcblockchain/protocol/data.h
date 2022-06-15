@@ -3,7 +3,7 @@
  *
  * \brief Data for blockchain protocol.
  *
- * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VCBLOCKCHAIN_PROTOCOL_DATA_HEADER_GUARD
@@ -616,6 +616,66 @@ typedef struct protocol_resp_connection_close
     /** \brief the protocol response status. */
     uint32_t status;
 } protocol_resp_connection_close;
+
+/**
+ * \brief The decoded protocol request for the latest block id assertion.
+ */
+typedef struct protocol_req_assert_latest_block_id
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief the latest block uuid. */
+    vpr_uuid latest_block_id;
+} protocol_req_assert_latest_block_id;
+
+/**
+ * \brief The decoded protocol response for the latest block id assertion.
+ */
+typedef struct protocol_resp_assert_latest_block_id
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_assert_latest_block_id;
+
+/**
+ * \brief The decoded protocol request for the latest block id assertion
+ * cancellation.
+ */
+typedef struct protocol_req_assert_latest_block_id_cancel
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+} protocol_req_assert_latest_block_id_cancel;
+
+/**
+ * \brief The decoded protocol response for the latest block id assertion
+ * cancellation.
+ */
+typedef struct protocol_resp_latest_block_id_cancel
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_latest_block_id_cancel;
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
