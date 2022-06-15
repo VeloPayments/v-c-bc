@@ -665,7 +665,7 @@ typedef struct protocol_req_assert_latest_block_id_cancel
  * \brief The decoded protocol response for the latest block id assertion
  * cancellation.
  */
-typedef struct protocol_resp_latest_block_id_cancel
+typedef struct protocol_resp_assert_latest_block_id_cancel
 {
     /** \brief this structure is disposable. */
     disposable_t hdr;
@@ -675,7 +675,7 @@ typedef struct protocol_resp_latest_block_id_cancel
     uint32_t offset;
     /** \brief the protocol response status. */
     uint32_t status;
-} protocol_resp_latest_block_id_cancel;
+} protocol_resp_assert_latest_block_id_cancel;
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

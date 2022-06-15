@@ -4,7 +4,7 @@
  * \brief Protocol abstraction layer for communicating with the blockchain
  * agent.
  *
- * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VCBLOCKCHAIN_PROTOCOL_HEADER_GUARD
@@ -548,6 +548,7 @@ int vcblockchain_protocol_sendreq_connection_close(
  *                                  should be unique per any outbound request
  *                                  for which a response has not yet been
  *                                  received.
+ * \param latest_block_id           The latest block id for this request.
  *
  * This function sends a connection close request to the server.
  *
