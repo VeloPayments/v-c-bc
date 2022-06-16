@@ -54,7 +54,7 @@ int vcblockchain_protocol_encode_req_assert_latest_block_id_cancel(
 
     /* write the request id and offset. */
     uint32_t* u32arr = (uint32_t*)buffer->data;
-    u32arr[0] = htonl(PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID);
+    u32arr[0] = htonl(PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID_CANCEL);
     u32arr[1] = htonl(offset);
 
     /* success. */
