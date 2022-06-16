@@ -75,7 +75,7 @@ TEST(
 
     /* verify that the request id and offset are set correctly. */
     const uint32_t* u32arr = (const uint32_t*)buffer.data;
-    EXPECT_EQ(htonl(PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID), u32arr[0]);
+    EXPECT_EQ(htonl(PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID_CANCEL), u32arr[0]);
     EXPECT_EQ(htonl(EXPECTED_OFFSET), u32arr[1]);
 
     /* clean up. */
