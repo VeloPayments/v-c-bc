@@ -1550,6 +1550,28 @@ int vcblockchain_protocol_decode_resp_assert_latest_block_id_cancel(
     protocol_resp_assert_latest_block_id_cancel* resp, const void* payload,
     size_t payload_size);
 
+/**
+ * \brief Encode a generic response for the protocol.
+ *
+ * \param buffer            An uninitialized buffer to hold the response on
+ *                          success.
+ * \param alloc_opts        The allocator options to use for this operation.
+ * \param request_id        The request id originating this response.
+ * \param offset            The client offset for this response.
+ * \param status_code       The status code for this response.
+ * \param payload           The payload buffer for this response, or NULL for no
+ *                          payload.
+ * \param payload_size      The size of this payload.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_generic(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts,
+    uint32_t request_id, uint32_t offset, uint32_t status_code,
+    const void* payload, size_t payload_size);
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
