@@ -591,6 +591,65 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
     vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
+ * \brief Send an extended API enable request.
+ *
+ * This request enables the connected entity to field extended API requests to
+ * it through the blockchain agent. The blockchain agent will authenticate and
+ * authorize other entities wishing to send requests to this entity, but from
+ * there, will only forward requests to this entity. It is up to this entity to
+ * perform any additional parameter checks on any requests it receives.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset to use for this request. It
+ *                                  should be unique per any outbound request
+ *                                  for which a response has not yet been
+ *                                  received.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended_api_enable(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    vccrypt_buffer_t* shared_secret, uint32_t offset);
+
+/**
+ * \brief Send an extended API request.
+ *
+ * This request enables the connected entity to field extended API requests to
+ * it through the blockchain agent. The blockchain agent will authenticate and
+ * authorize other entities wishing to send requests to this entity, but from
+ * there, will only forward requests to this entity. It is up to this entity to
+ * perform any additional parameter checks on any requests it receives.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset to use for this request. It
+ *                                  should be unique per any outbound request
+ *                                  for which a response has not yet been
+ *                                  received.
+ * \param entity_id                 The entity to which this request should be
+ *                                  sent.
+ * \param verb_id                   The verb id for this request.
+ * \param request_body              The body of the request to be sent.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* entity_id,
+    const vpr_uuid* verb_id, const vccrypt_buffer_t* request_body);
+
+/**
  * \brief Receive a response from the API.
  *
  * \param sock                      The socket from which this response is read.
