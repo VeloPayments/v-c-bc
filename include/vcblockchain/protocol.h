@@ -620,12 +620,6 @@ int vcblockchain_protocol_sendreq_extended_api_enable(
 /**
  * \brief Send an extended API request.
  *
- * This request enables the connected entity to field extended API requests to
- * it through the blockchain agent. The blockchain agent will authenticate and
- * authorize other entities wishing to send requests to this entity, but from
- * there, will only forward requests to this entity. It is up to this entity to
- * perform any additional parameter checks on any requests it receives.
- *
  * \param sock                      The socket to which this request is written.
  * \param suite                     The crypto suite to use for this request.
  * \param client_iv                 Pointer to the client IV, updated by this
@@ -644,10 +638,33 @@ int vcblockchain_protocol_sendreq_extended_api_enable(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_extended(
+int vcblockchain_protocol_sendreq_extended_api(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* entity_id,
     const vpr_uuid* verb_id, const vccrypt_buffer_t* request_body);
+
+/**
+ * \brief Send an response to an extended API request.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset provided by agentd for the
+ *                                  original extended request. Unlike regular
+ *                                  offsets, these are 64-bit and are only used
+ *                                  once.
+ * \param response_body             The body of the response to be sent.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended_api_response(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vccrypt_buffer_t* response_body);
 
 /**
  * \brief Receive a response from the API.
