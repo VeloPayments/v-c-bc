@@ -1611,6 +1611,25 @@ int vcblockchain_protocol_encode_resp_extended_api_enable(
     uint32_t offset, uint32_t status);
 
 /**
+ * \brief Decode an extended API enable response.
+ *
+ * \param resp                      The decoded response buffer.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p resp structure is initialized with the decoded values.
+ * The caller owns this structure and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_resp_extended_api_enable(
+    protocol_resp_extended_api_enable* resp, const void* payload,
+    size_t payload_size);
+
+/**
  * \brief Encode a generic response for the protocol.
  *
  * \param buffer            An uninitialized buffer to hold the response on
