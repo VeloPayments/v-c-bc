@@ -1630,6 +1630,31 @@ int vcblockchain_protocol_decode_resp_extended_api_enable(
     size_t payload_size);
 
 /**
+ * \brief Encode an extended API request.
+ *
+ * \param buffer                    Pointer to an uninitialized buffer to
+ *                                  receive the encoded request packet.
+ * \param alloc_opts                The allocator to use for this operation.
+ * \param offset                    The offset to use for this request.
+ * \param entity_id                 The entity UUID of the requested API.
+ * \param verb_id                   The verb UUID to be performed on this
+ *                                  entity.
+ * \param request_body              The body of the request to be sent.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * request. The caller owns this buffer and must \ref dispose() it when it is no
+ * longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_req_extended_api(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint32_t offset,
+    const vpr_uuid* entity_id, const vpr_uuid* verb_id,
+    const vccrypt_buffer_t* request_body);
+
+/**
  * \brief Encode a generic response for the protocol.
  *
  * \param buffer            An uninitialized buffer to hold the response on
