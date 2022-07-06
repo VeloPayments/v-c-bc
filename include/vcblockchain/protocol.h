@@ -644,7 +644,7 @@ int vcblockchain_protocol_sendreq_extended_api(
     const vpr_uuid* verb_id, const vccrypt_buffer_t* request_body);
 
 /**
- * \brief Send an response to an extended API request.
+ * \brief Send a response to an extended API request.
  *
  * \param sock                      The socket to which this request is written.
  * \param suite                     The crypto suite to use for this request.
