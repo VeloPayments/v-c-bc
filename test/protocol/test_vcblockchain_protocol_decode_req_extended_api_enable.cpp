@@ -45,7 +45,7 @@ TEST(test_vcblockchain_protocol_decode_req_extended_api_enable, payload_size)
     size_t EXPECTED_PAYLOAD_SIZE = sizeof(EXPECTED_PAYLOAD);
     protocol_req_extended_api_enable req;
 
-    /* This method performs null checks on pointer parameters. */
+    /* This method verifies the payload size. */
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_decode_req_extended_api_enable(
