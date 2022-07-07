@@ -1658,6 +1658,7 @@ int vcblockchain_protocol_encode_req_extended_api(
  * \brief Decode an extended API request.
  *
  * \param req                       The decoded request buffer.
+ * \param alloc_opts                The allocator to use for this operation.
  * \param payload                   Pointer to the payload to decode.
  * \param payload_size              Size of the payload.
  *
@@ -1670,7 +1671,8 @@ int vcblockchain_protocol_encode_req_extended_api(
  *      - a non-zero error code on failure.
  */
 int vcblockchain_protocol_decode_req_extended_api(
-    protocol_req_extended_api* req, const void* payload, size_t payload_size);
+    protocol_req_extended_api* req, allocator_options_t* alloc_opts,
+    const void* payload, size_t payload_size);
 
 /**
  * \brief Encode an extended API response.
