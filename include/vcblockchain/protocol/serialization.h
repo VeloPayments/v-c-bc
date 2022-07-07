@@ -1695,7 +1695,7 @@ int vcblockchain_protocol_decode_req_extended_api(
  */
 int vcblockchain_protocol_encode_resp_extended_api(
     vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint32_t offset,
-    uint32_t status, vccrypt_buffer_t* response_body);
+    uint32_t status, const vccrypt_buffer_t* response_body);
 
 /**
  * \brief Decode an extended API response.
