@@ -97,7 +97,7 @@ TEST(test_vcblockchain_protocol_decode_resp_extended_api, happy_path)
     memset(&resp, 0, sizeof(resp));
 
     /* we can decode this message. */
-    EXPECT_EQ(
+    ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_decode_resp_extended_api(
             &resp, &alloc_opts, buffer.data, buffer.size));
