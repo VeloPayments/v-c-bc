@@ -1728,9 +1728,9 @@ int vcblockchain_protocol_decode_resp_extended_api(
  * \param offset                    The offset for this response.
  * \param client_id                 The client entity id for this
  *                                  request/response.
+ * \param verb_id                   The verb uuid for this request/response.
  * \param client_enc_pubkey         The client encryption public key.
  * \param client_sign_pubkey        The client signing public key.
- * \param verb_id                   The verb uuid for this request/response.
  * \param request_body              The request body for this request/response.
  *
  * On success, the \p buffer is initialized with a buffer holding the encoded
@@ -1742,9 +1742,10 @@ int vcblockchain_protocol_decode_resp_extended_api(
  *      - a non-zero error code on failure.
  */
 int vcblockchain_protocol_encode_resp_extended_api_client_request(
-    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint32_t offset,
-    const vpr_uuid* client_id, const vccrypt_buffer_t* client_enc_pubkey,
-    const vccrypt_buffer_t* client_sign_pubkey, const vpr_uuid* verb_id,
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint64_t offset,
+    const vpr_uuid* client_id, const vpr_uuid* verb_id,
+    const vccrypt_buffer_t* client_enc_pubkey,
+    const vccrypt_buffer_t* client_sign_pubkey,
     const vccrypt_buffer_t* request_body);
 
 /**
