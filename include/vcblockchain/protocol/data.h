@@ -762,12 +762,12 @@ typedef struct protocol_resp_extended_api_client_request
     uint64_t offset;
     /** \brief The client entity id. */
     vpr_uuid client_id;
+    /** \brief The verb that the client entity is invoking. */
+    vpr_uuid verb_id;
     /** \brief The client encryption public key. */
     vccrypt_buffer_t client_enc_pubkey;
     /** \brief The client signing public key. */
     vccrypt_buffer_t client_sign_pubkey;
-    /** \brief The verb that the client entity is invoking. */
-    vpr_uuid verb_id;
     /** \brief The request body. */
     vccrypt_buffer_t request_body;
 } protocol_resp_extended_api_client_request;
