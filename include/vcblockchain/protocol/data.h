@@ -761,7 +761,7 @@ typedef struct protocol_resp_extended_api_client_request
     /** \brief the offset. */
     uint64_t offset;
     /** \brief The client entity id. */
-    vpr_uuid client_entity_id;
+    vpr_uuid client_id;
     /** \brief The client encryption public key. */
     vccrypt_buffer_t client_enc_pubkey;
     /** \brief The client signing public key. */

@@ -1719,6 +1719,35 @@ int vcblockchain_protocol_decode_resp_extended_api(
     const void* payload, size_t payload_size);
 
 /**
+ * \brief Encode an extended API client request response.
+ *
+ * \param buffer                    Pointer to an unitialized buffer to receive
+ *                                  the encoded response.
+ * \param alloc_opts                The allocator options to use to allocate the
+ *                                  buffer.
+ * \param offset                    The offset for this response.
+ * \param client_id                 The client entity id for this
+ *                                  request/response.
+ * \param client_enc_pubkey         The client encryption public key.
+ * \param client_sign_pubkey        The client signing public key.
+ * \param verb_id                   The verb uuid for this request/response.
+ * \param request_body              The request body for this request/response.
+ *
+ * On success, the \p buffer is initialized with a buffer holding the encoded
+ * response. The caller owns this buffer and must \ref dispose() it when it is
+ * no longer needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_encode_resp_extended_api_client_request(
+    vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint32_t offset,
+    const vpr_uuid* client_id, const vccrypt_buffer_t* client_enc_pubkey,
+    const vccrypt_buffer_t* client_sign_pubkey, const vpr_uuid* verb_id,
+    const vccrypt_buffer_t* request_body);
+
+/**
  * \brief Encode a generic response for the protocol.
  *
  * \param buffer            An uninitialized buffer to hold the response on
