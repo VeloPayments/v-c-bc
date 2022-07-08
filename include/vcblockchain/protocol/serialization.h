@@ -1791,6 +1791,26 @@ int vcblockchain_protocol_encode_req_extended_api_response(
     const vccrypt_buffer_t* response_body);
 
 /**
+ * \brief Decode an extended API request to send a client response.
+ *
+ * \param req                       The decoded request buffer.
+ * \param alloc_opts                The allocator to use for this operation.
+ * \param payload                   Pointer to the payload to decode.
+ * \param payload_size              Size of the payload.
+ *
+ * On success, the \p req structure is initialized with the decoded values. The
+ * caller owns this structure and must \ref dispose() of it when it is no longer
+ * needed.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_decode_req_extended_api_response(
+    protocol_req_extended_api_response* req, allocator_options_t* alloc_opts,
+    const void* payload, size_t payload_size);
+
+/**
  * \brief Encode a generic response for the protocol.
  *
  * \param buffer            An uninitialized buffer to hold the response on
