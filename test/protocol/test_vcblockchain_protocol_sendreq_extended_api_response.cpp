@@ -32,6 +32,7 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
     const uint64_t STARTING_CLIENT_IV = 1;
     const uint64_t EXPECTED_CLIENT_IV = 2;
     const uint64_t EXPECTED_OFFSET = 19;
+    const uint32_t EXPECTED_STATUS = 91;
     const uint8_t SHARED_SECRET[32] = {
         0x16, 0xac, 0x42, 0x3e, 0x91, 0x9d, 0x40, 0x6b,
         0xa6, 0x1c, 0x9a, 0x92, 0x70, 0x62, 0x2d, 0xe6,
@@ -94,7 +95,7 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
         VCCRYPT_STATUS_SUCCESS,
         vcblockchain_protocol_sendreq_extended_api_response(
             &sock, &suite, &client_iv, &shared_secret, EXPECTED_OFFSET,
-            &response_body));
+            EXPECTED_STATUS, &response_body));
 
     /* the iv should be updated. */
     EXPECT_EQ(EXPECTED_CLIENT_IV, client_iv);
@@ -142,6 +143,7 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
     /* the data should have been properly serialized. */
     EXPECT_EQ(PROTOCOL_REQ_ID_EXTENDED_API_SENDRESP, req.request_id);
     EXPECT_EQ(EXPECTED_OFFSET, req.offset);
+    EXPECT_EQ(EXPECTED_STATUS, req.status);
     ASSERT_NE(nullptr, req.response_body.data);
     ASSERT_EQ(response_body.size, req.response_body.size);
     EXPECT_EQ(

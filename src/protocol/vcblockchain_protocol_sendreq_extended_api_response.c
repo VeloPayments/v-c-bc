@@ -22,6 +22,7 @@
  *                                  original extended request. Unlike regular
  *                                  offsets, these are 64-bit and are only used
  *                                  once.
+ * \param status                    The status to pass to the client.
  * \param response_body             The body of the response to be sent.
  *
  * \returns a status code indicating success or failure.
@@ -30,7 +31,7 @@
  */
 int vcblockchain_protocol_sendreq_extended_api_response(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint64_t offset,
+    vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
     const vccrypt_buffer_t* response_body)
 {
     int retval;
@@ -46,7 +47,7 @@ int vcblockchain_protocol_sendreq_extended_api_response(
     vccrypt_buffer_t buffer;
     retval =
         vcblockchain_protocol_encode_req_extended_api_response(
-            &buffer, suite->alloc_opts, offset, response_body);
+            &buffer, suite->alloc_opts, offset, status, response_body);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
         goto done;

@@ -24,6 +24,7 @@ TEST(
     parameter_checks)
 {
     const uint64_t EXPECTED_OFFSET = 71;
+    const uint32_t EXPECTED_STATUS = 9;
     allocator_options_t alloc_opts;
     vccrypt_buffer_t buffer;
     vccrypt_buffer_t response_body;
@@ -35,15 +36,18 @@ TEST(
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_encode_req_extended_api_response(
-            nullptr, &alloc_opts, EXPECTED_OFFSET, &response_body));
+            nullptr, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+            &response_body));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_encode_req_extended_api_response(
-            &buffer, nullptr, EXPECTED_OFFSET, &response_body));
+            &buffer, nullptr, EXPECTED_OFFSET, EXPECTED_STATUS,
+            &response_body));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_encode_req_extended_api_response(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, nullptr));
+            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+            nullptr));
 
     /* clean up. */
     dispose((disposable_t*)&alloc_opts);
@@ -56,6 +60,7 @@ TEST(
 TEST(test_vcblockchain_protocol_encode_req_extended_api_response, happy_path)
 {
     const uint64_t EXPECTED_OFFSET = 71;
+    const uint32_t EXPECTED_STATUS = 9;
     allocator_options_t alloc_opts;
     vccrypt_buffer_t buffer;
     vccrypt_buffer_t response_body;
@@ -76,12 +81,14 @@ TEST(test_vcblockchain_protocol_encode_req_extended_api_response, happy_path)
     EXPECT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_encode_req_extended_api_response(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, &response_body));
+            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+            &response_body));
 
     /* compute the message size. */
     size_t message_size =
         sizeof(uint32_t)
       + sizeof(EXPECTED_OFFSET)
+      + sizeof(EXPECTED_STATUS)
       + response_body.size;
 
     /* the buffer has been initialized. */
@@ -102,6 +109,12 @@ TEST(test_vcblockchain_protocol_encode_req_extended_api_response, happy_path)
     memcpy(&net_offset, barr, sizeof(net_offset));
     barr += sizeof(net_offset);
     EXPECT_EQ(EXPECTED_OFFSET, ntohll(net_offset));
+
+    /* verify the status. */
+    uint32_t net_status;
+    memcpy(&net_status, barr, sizeof(net_status));
+    barr += sizeof(net_status);
+    EXPECT_EQ(EXPECTED_STATUS, ntohl(net_status));
 
     /* verify the response body. */
     EXPECT_EQ(0, memcmp(response_body.data, barr, response_body.size));

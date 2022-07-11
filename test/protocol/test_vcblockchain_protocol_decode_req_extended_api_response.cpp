@@ -76,6 +76,7 @@ TEST(test_vcblockchain_protocol_decode_req_extended_api_response, payload_size)
 TEST(test_vcblockchain_protocol_decode_req_extended_api_response, happy_path)
 {
     const uint64_t EXPECTED_OFFSET = 122;
+    const uint32_t EXPECTED_STATUS = 221;
     protocol_req_extended_api_response req;
     allocator_options_t alloc_opts;
     vccrypt_buffer_t buffer;
@@ -94,7 +95,8 @@ TEST(test_vcblockchain_protocol_decode_req_extended_api_response, happy_path)
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_encode_req_extended_api_response(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, &response_body));
+            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+            &response_body));
 
     /* precondition: zero out request struct. */
     memset(&req, 0, sizeof(req));
@@ -109,6 +111,8 @@ TEST(test_vcblockchain_protocol_decode_req_extended_api_response, happy_path)
     EXPECT_EQ(PROTOCOL_REQ_ID_EXTENDED_API_SENDRESP, req.request_id);
     /* the offset is set correctly. */
     EXPECT_EQ(EXPECTED_OFFSET, req.offset);
+    /* the status is set correctly. */
+    EXPECT_EQ(EXPECTED_STATUS, req.status);
     /* the response body is set correctly. */
     ASSERT_NE(nullptr, req.response_body.data);
     ASSERT_EQ(response_body.size, req.response_body.size);

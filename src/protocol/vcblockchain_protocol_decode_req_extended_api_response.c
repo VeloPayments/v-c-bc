@@ -50,7 +50,8 @@ int vcblockchain_protocol_decode_req_extended_api_response(
     /* verify that the payload size is correct. */
     const size_t expected_payload_size =
         sizeof(uint32_t)
-      + sizeof(uint64_t);
+      + sizeof(uint64_t)
+      + sizeof(uint32_t);
     if (payload_size < expected_payload_size)
     {
         return VCBLOCKCHAIN_ERROR_INVALID_ARG;
@@ -74,6 +75,12 @@ int vcblockchain_protocol_decode_req_extended_api_response(
     memcpy(&net_offset, barr, sizeof(net_offset));
     barr += sizeof(net_offset);
     req->offset = ntohll(net_offset);
+
+    /* copy the status. */
+    uint32_t net_status;
+    memcpy(&net_status, barr, sizeof(net_status));
+    barr += sizeof(net_status);
+    req->status = ntohl(net_status);
 
     /* compute the response body size. */
     const size_t response_body_size = payload_size - expected_payload_size;

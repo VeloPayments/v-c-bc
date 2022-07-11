@@ -783,6 +783,8 @@ typedef struct protocol_req_extended_api_response
     uint32_t request_id;
     /** \brief the offset. */
     uint64_t offset;
+    /** \brief the status. */
+    uint32_t status;
     /** \brief The response body. */
     vccrypt_buffer_t response_body;
 } protocol_req_extended_api_response;
