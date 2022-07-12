@@ -21,6 +21,7 @@
  *                                  receive the encoded request packet.
  * \param alloc_opts                The allocator to use for this operation.
  * \param offset                    The offset to use for this request.
+ * \param status                    The status to use for this request.
  * \param response_body             The body of the response to be sent.
  *
  * On success, the \p buffer is initialized with a buffer holding the encoded
@@ -33,7 +34,7 @@
  */
 int vcblockchain_protocol_encode_req_extended_api_response(
     vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint64_t offset,
-    const vccrypt_buffer_t* response_body)
+    uint32_t status, const vccrypt_buffer_t* response_body)
 {
     /* parameter sanity checks. */
     MODEL_ASSERT(NULL != buffer);
@@ -50,7 +51,8 @@ int vcblockchain_protocol_encode_req_extended_api_response(
     /* compute the buffer size. */
     size_t buffer_size =
         sizeof(uint32_t) /* request_id */
-      + sizeof(uint64_t) /* request_id */
+      + sizeof(uint64_t) /* offset */
+      + sizeof(uint32_t) /* status */
       + response_body->size;
 
     /* initialize the buffer. */
@@ -72,6 +74,11 @@ int vcblockchain_protocol_encode_req_extended_api_response(
     uint64_t net_offset = htonll(offset);
     memcpy(barr, &net_offset, sizeof(net_offset));
     barr += sizeof(net_offset);
+
+    /* write the status. */
+    uint32_t net_status = htonl(status);
+    memcpy(barr, &net_status, sizeof(net_status));
+    barr += sizeof(net_status);
 
     /* write the response buffer. */
     memcpy(barr, response_body->data, response_body->size);

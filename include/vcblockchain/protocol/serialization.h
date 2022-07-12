@@ -1776,6 +1776,7 @@ int vcblockchain_protocol_decode_resp_extended_api_client_request(
  *                                  receive the encoded request packet.
  * \param alloc_opts                The allocator to use for this operation.
  * \param offset                    The offset to use for this request.
+ * \param status                    The status to use for this request.
  * \param response_body             The body of the response to be sent.
  *
  * On success, the \p buffer is initialized with a buffer holding the encoded
@@ -1788,7 +1789,7 @@ int vcblockchain_protocol_decode_resp_extended_api_client_request(
  */
 int vcblockchain_protocol_encode_req_extended_api_response(
     vccrypt_buffer_t* buffer, allocator_options_t* alloc_opts, uint64_t offset,
-    const vccrypt_buffer_t* response_body);
+    uint32_t status, const vccrypt_buffer_t* response_body);
 
 /**
  * \brief Decode an extended API request to send a client response.
