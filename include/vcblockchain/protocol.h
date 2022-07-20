@@ -349,7 +349,7 @@ int vcblockchain_protocol_sendreq_block_id_by_height_get(
  */
 int vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* artifact_id);
 
 /**
