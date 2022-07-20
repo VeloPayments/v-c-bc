@@ -623,7 +623,7 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
  */
 int vcblockchain_protocol_sendreq_extended_api_enable(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
  * \brief Send an extended API request.
