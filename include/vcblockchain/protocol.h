@@ -148,7 +148,7 @@ int vcblockchain_protocol_recvresp_handshake_request(
  */
 int vcblockchain_protocol_sendreq_handshake_ack(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    uint64_t* server_iv, vccrypt_buffer_t* shared_secret,
+    uint64_t* server_iv, const vccrypt_buffer_t* shared_secret,
     const vccrypt_buffer_t* server_challenge_nonce);
 
 /**
