@@ -235,7 +235,8 @@ int vcblockchain_protocol_sendreq_transaction_submit(
  */
 int vcblockchain_protocol_sendreq_block_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* block_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* block_id);
 
 /**
  * \brief Send a block get next id request.
