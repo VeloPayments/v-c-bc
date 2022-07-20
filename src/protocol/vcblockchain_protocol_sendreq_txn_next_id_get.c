@@ -35,7 +35,8 @@
  */
 int vcblockchain_protocol_sendreq_txn_next_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id)
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id)
 {
     int retval;
 
