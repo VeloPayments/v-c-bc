@@ -33,8 +33,9 @@
  */
 int vcblockchain_protocol_sendreq_extended_api(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* entity_id,
-    const vpr_uuid* verb_id, const vccrypt_buffer_t* request_body)
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* entity_id, const vpr_uuid* verb_id,
+    const vccrypt_buffer_t* request_body)
 {
     int retval;
 
