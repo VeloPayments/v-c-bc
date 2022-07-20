@@ -205,8 +205,9 @@ int vcblockchain_protocol_sendreq_latest_block_id_get(
  */
 int vcblockchain_protocol_sendreq_transaction_submit(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id,
-    const vpr_uuid* artifact_id, const void* cert, size_t cert_size);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id, const vpr_uuid* artifact_id, const void* cert,
+    size_t cert_size);
 
 /**
  * \brief Send a block get request.
