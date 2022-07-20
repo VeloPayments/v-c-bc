@@ -516,7 +516,7 @@ int vcblockchain_protocol_sendreq_txn_block_id_get(
  */
 int vcblockchain_protocol_sendreq_status_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
  * \brief Send a connection close request.
