@@ -272,7 +272,7 @@ int ssock_read_data(
 int ssock_read_authed_data(
     ssock* sock, allocator_options_t* alloc_opts, uint64_t iv, void** val,
     uint32_t* size, vccrypt_suite_options_t* suite,
-    vccrypt_buffer_t* secret);
+    const vccrypt_buffer_t* secret);
 
 /**
  * \brief Read a character string from the socket.
