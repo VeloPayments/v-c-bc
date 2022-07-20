@@ -322,7 +322,7 @@ int vcblockchain_protocol_sendreq_block_prev_id_get(
  */
 int vcblockchain_protocol_sendreq_block_id_by_height_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, uint64_t height);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset, uint64_t height);
 
 /**
  * \brief Send an artifact get first transaction id request.
