@@ -673,7 +673,7 @@ int vcblockchain_protocol_sendreq_extended_api(
  */
 int vcblockchain_protocol_sendreq_extended_api_response(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
+    const vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
     const vccrypt_buffer_t* response_body);
 
 /**
