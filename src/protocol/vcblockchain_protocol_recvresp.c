@@ -42,7 +42,7 @@
  */
 int vcblockchain_protocol_recvresp(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
-    vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response)
+    const vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response)
 {
     int retval;
 

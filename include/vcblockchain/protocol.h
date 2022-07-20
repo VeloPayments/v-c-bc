@@ -708,7 +708,7 @@ int vcblockchain_protocol_sendreq_extended_api_response(
  */
 int vcblockchain_protocol_recvresp(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
-    vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
+    const vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
 
 /**
  * \brief Decode the header values of a response.
