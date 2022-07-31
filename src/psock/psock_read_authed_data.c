@@ -207,8 +207,8 @@ int psock_read_authed_data(
     }
 
     /* the payload has been authenticated.  create output buffer. */
-    *val = malloc(*size);
-    if (NULL == *val)
+    retval = rcpr_allocator_allocate(alloc, (void**)val, *size);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY;
         goto cleanup_digest;
@@ -243,7 +243,11 @@ int psock_read_authed_data(
 
 cleanup_val:
     memset(*val, 0, *size);
-    free(*val);
+    release_retval = rcpr_allocator_reclaim(alloc, *val);
+    if (STATUS_SUCCESS != release_retval)
+    {
+        retval = release_retval;
+    }
     *val = NULL;
 
 cleanup_digest:
