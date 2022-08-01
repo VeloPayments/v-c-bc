@@ -1,6 +1,6 @@
 [wrap-git]
 directory = vccrypt
-revision = 128266002eed018e9e53aab637c0d3bedc7ad622
+revision = ca750801e6dd5df65a147cd26540a632a6c42df7
 url = git@github.com:velopayments/v-c-crypto.git
 push-url = git@github.com:velopayments/v-c-crypto.git
 
