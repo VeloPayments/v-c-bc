@@ -1,9 +1,9 @@
 /**
- * \file protocol/vcblockchain_protocol_sendreq_status_get.c
+ * \file protocol/vcblockchain_protocol_sendreq_extended_api_enable.c
  *
- * \brief Send a status get request to the server.
+ * \brief Send an extended api enable request to the server.
  *
- * \copyright 2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -11,28 +11,29 @@
 #include <vcblockchain/protocol/serialization.h>
 
 /**
- * \brief Send a status get request.
+ * \brief Send an extended API enable request.
+ *
+ * This request enables the connected entity to field extended API requests to
+ * it through the blockchain agent. The blockchain agent will authenticate and
+ * authorize other entities wishing to send requests to this entity, but from
+ * there, will only forward requests to this entity. It is up to this entity to
+ * perform any additional parameter checks on any requests it receives.
  *
  * \param sock                      The socket to which this request is written.
- * \param suite                     The crypto suite to use for this handshake.
+ * \param suite                     The crypto suite to use for this request.
  * \param client_iv                 Pointer to the client IV, updated by this
  *                                  call.
- * \param shared_secret             The shared secret key for this request.
+ * \param shared_secret             The shared secret to use for this request.
  * \param offset                    The offset to use for this request. It
  *                                  should be unique per any outbound request
  *                                  for which a response has not yet been
  *                                  received.
  *
- * This function sends a status get request to the server.
- *
  * \returns a status code indicating success or failure.
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
- *      - VCBLOCKCHAIN_ERROR_SSOCK_WRITE if writing to the socket failed.
- *      - VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY if this operation encountered an
- *        out-of-memory error.
- *      - a non-zero error response if something else has failed.
+ *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_status_get(
+int vcblockchain_protocol_sendreq_extended_api_enable(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset)
 {
@@ -47,7 +48,7 @@ int vcblockchain_protocol_sendreq_status_get(
     /* encode the request. */
     vccrypt_buffer_t buffer;
     retval =
-        vcblockchain_protocol_encode_req_status_get(
+        vcblockchain_protocol_encode_req_extended_api_enable(
             &buffer, suite->alloc_opts, offset);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {

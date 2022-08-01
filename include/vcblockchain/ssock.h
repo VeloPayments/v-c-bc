@@ -135,7 +135,7 @@ int ssock_write_data(ssock* sock, const void* val, uint32_t size);
  */
 int ssock_write_authed_data(
     ssock* sock, uint64_t iv, const void* val, uint32_t size,
-    vccrypt_suite_options_t* suite, vccrypt_buffer_t* secret);
+    vccrypt_suite_options_t* suite, const vccrypt_buffer_t* secret);
 
 /**
  * \brief Write a character string to the socket.
@@ -272,7 +272,7 @@ int ssock_read_data(
 int ssock_read_authed_data(
     ssock* sock, allocator_options_t* alloc_opts, uint64_t iv, void** val,
     uint32_t* size, vccrypt_suite_options_t* suite,
-    vccrypt_buffer_t* secret);
+    const vccrypt_buffer_t* secret);
 
 /**
  * \brief Read a character string from the socket.

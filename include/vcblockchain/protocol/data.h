@@ -43,6 +43,11 @@ typedef enum protocol_request_id
     PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID = 0x00000030,
     PROTOCOL_REQ_ID_ASSERT_LATEST_BLOCK_ID_CANCEL = 0x00000031,
 
+    PROTOCOL_REQ_ID_EXTENDED_API_ENABLE = 0x00000050,
+    PROTOCOL_REQ_ID_EXTENDED_API_SENDRECV = 0x00000051,
+    PROTOCOL_REQ_ID_EXTENDED_API_CLIENTREQ = 0x00000052,
+    PROTOCOL_REQ_ID_EXTENDED_API_SENDRESP = 0x00000053,
+
     PROTOCOL_REQ_ID_STATUS_GET = 0x0000A000,
 
     PROTOCOL_REQ_ID_CLOSE = 0x0000FFFF,
@@ -676,6 +681,128 @@ typedef struct protocol_resp_assert_latest_block_id_cancel
     /** \brief the protocol response status. */
     uint32_t status;
 } protocol_resp_assert_latest_block_id_cancel;
+
+/**
+ * \brief The decoded protocol request for enabling the extended API for a given
+ * entity.
+ */
+typedef struct protocol_req_extended_api_enable
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+} protocol_req_extended_api_enable;
+
+/**
+ * \brief The decoded protocol response for enabling the extended API for a
+ * given entity.
+ */
+typedef struct protocol_resp_extended_api_enable
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_extended_api_enable;
+
+/**
+ * \brief The decoded protocol request for an extended API call.
+ */
+typedef struct protocol_req_extended_api
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint32_t offset;
+    /** \brief The entity id to call. */
+    vpr_uuid entity_id;
+    /** \brief The verb to call. */
+    vpr_uuid verb_id;
+    /** \brief The request body. */
+    vccrypt_buffer_t request_body;
+} protocol_req_extended_api;
+
+/**
+ * \brief The decoded protocol response for an extended API call.
+ */
+typedef struct protocol_resp_extended_api
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint32_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+    /** \brief The response body. */
+    vccrypt_buffer_t response_body;
+} protocol_resp_extended_api;
+
+/**
+ * \brief The decoded protocol response for an extended API request, sent to the
+ * extended api entity on behalf of the client.
+ */
+typedef struct protocol_resp_extended_api_client_request
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint64_t offset;
+    /** \brief The client entity id. */
+    vpr_uuid client_id;
+    /** \brief The verb that the client entity is invoking. */
+    vpr_uuid verb_id;
+    /** \brief The client encryption public key. */
+    vccrypt_buffer_t client_enc_pubkey;
+    /** \brief The client signing public key. */
+    vccrypt_buffer_t client_sign_pubkey;
+    /** \brief The request body. */
+    vccrypt_buffer_t request_body;
+} protocol_resp_extended_api_client_request;
+
+/**
+ * \brief The decoded protocol request for an extended API response.
+ */
+typedef struct protocol_req_extended_api_response
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the offset. */
+    uint64_t offset;
+    /** \brief the status. */
+    uint32_t status;
+    /** \brief The response body. */
+    vccrypt_buffer_t response_body;
+} protocol_req_extended_api_response;
+
+/**
+ * \brief The decoded protocol response for an extended API response.
+ */
+typedef struct protocol_resp_extended_api_response
+{
+    /** \brief this structure is disposable. */
+    disposable_t hdr;
+    /** \brief the protocol request id. */
+    uint32_t request_id;
+    /** \brief the protocol request offset. */
+    uint64_t offset;
+    /** \brief the protocol response status. */
+    uint32_t status;
+} protocol_resp_extended_api_response;
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

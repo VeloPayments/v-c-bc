@@ -1,15 +1,18 @@
 /**
- * \file ssock/ssock_write_authed_data.c
+ * \file psock/psock_write_authed_data.c
  *
- * \brief Write an authenticated data packet to a socket.
+ * \brief Write an encrypted and authenticated packet to the psock stream.
  *
- * \copyright 2020-2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
-#include <cbmc/model_assert.h>
 #include <string.h>
-#include <vcblockchain/ssock.h>
+#include <vcblockchain/error_codes.h>
+#include <vcblockchain/psock.h>
+#include <vccrypt/compare.h>
+
+RCPR_IMPORT_psock;
 
 /**
  * \brief Write an authenticated data packet.
@@ -17,7 +20,7 @@
  * On success, the authenticated data packet value will be written, along with
  * type information and size.
  *
- * \param sock          The \ref ssock socket to which data is written.
+ * \param sock          The psock instance to which this packet is written.
  * \param iv            The 64-bit IV to use for this packet.
  * \param val           The payload data to write.
  * \param size          The size of the payload data to write.
@@ -26,41 +29,30 @@
  *
  * \returns a status code indicating success or failure.
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
- *      - VCBLOCKCHAIN_ERROR_INVALID_ARG if a runtime argument check failed.
- *      - VCBLOCKCHAIN_ERROR_SSOCK_WRITE if writing data failed.
- *      - VCBLOCKCHAIN_ERROR_SSOCK_AUTHED_INVALID_CRYPTO_SUITE if the crypto
- *        suite is invalid.
- *      - VCBLOCKCHAIN_ERROR_SSOCK_AUTHED_INVALID_SECRET if the secret key is
- *        invalid.
+ *      - a non-zero error code on failure.
  */
-int ssock_write_authed_data(
-    ssock* sock, uint64_t iv, const void* val, uint32_t size,
+int psock_write_authed_data(
+    RCPR_SYM(psock)* sock, uint64_t iv, const void* val, uint32_t size,
     vccrypt_suite_options_t* suite, const vccrypt_buffer_t* secret)
 {
-    uint32_t type = htonl(SSOCK_DATA_TYPE_AUTHED_PACKET);
+    status retval = 0;
+    uint32_t type = htonl(VCBLOCKCHAIN_PSOCK_BOXED_TYPE_AUTHED_PACKET);
     uint32_t nsize = htonl(size);
-    int retval = 0;
 
     /* parameter sanity checks. */
-    MODEL_ASSERT(NULL != sock);
+    MODEL_ASSERT(prop_psock_valid(sock));
     MODEL_ASSERT(NULL != val);
-    MODEL_ASSERT(NULL != suite);
-    MODEL_ASSERT(NULL != secret);
-
-    /* runtime parameter checks. */
-    if (NULL == sock || NULL == val || NULL == suite || NULL == secret)
-    {
-        retval = VCBLOCKCHAIN_ERROR_INVALID_ARG;
-        goto done;
-    }
+    MODEL_ASSERT(prop_vccrypt_suite_options_valid(suite));
+    MODEL_ASSERT(prop_vccrypt_buffer_valid(secret));
 
     /* create a buffer for holding the digest. */
     vccrypt_buffer_t digest;
-    retval = 
+    retval =
         vccrypt_suite_buffer_init_for_mac_authentication_code(
             suite, &digest, true);
-    if (VCCRYPT_STATUS_SUCCESS != retval)
+    if (STATUS_SUCCESS != retval)
     {
+        retval = VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY;
         goto done;
     }
 
@@ -68,17 +60,17 @@ int ssock_write_authed_data(
     size_t packet_size =
         sizeof(type) + sizeof(nsize) + digest.size + size;
     vccrypt_buffer_t packet;
-    retval =
-        vccrypt_buffer_init(&packet, suite->alloc_opts, packet_size);
-    if (VCCRYPT_STATUS_SUCCESS != retval)
+    retval = vccrypt_buffer_init(&packet, suite->alloc_opts, packet_size);
+    if (STATUS_SUCCESS != retval)
     {
+        retval = VCBLOCKCHAIN_ERROR_OUT_OF_MEMORY;
         goto cleanup_digest;
     }
 
     /* create a stream cipher for encrypting this packet. */
     vccrypt_stream_context_t stream;
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_suite_stream_init(suite, &stream, secret))
+    retval = vccrypt_suite_stream_init(suite, &stream, secret);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_packet;
@@ -86,67 +78,75 @@ int ssock_write_authed_data(
 
     /* create a mac instance for building the packet authentication code. */
     vccrypt_mac_context_t mac;
-    if (VCCRYPT_STATUS_SUCCESS !=
-        vccrypt_suite_mac_short_init(suite, &mac, secret))
+    retval = vccrypt_suite_mac_short_init(suite, &mac, secret);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_stream;
     }
 
     /* start the stream cipher. */
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_stream_continue_encryption(&stream, &iv, sizeof(iv), 0))
+    retval = vccrypt_stream_continue_encryption(&stream, &iv, sizeof(iv), 0);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
     }
 
-    /* create a byte pointer for convenience. */
+    /* treat the packet as a byte array for convenience. */
     uint8_t* bpacket = (uint8_t*)packet.data;
     size_t offset = 0;
 
     /* encrypt the type. */
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_stream_encrypt(
-                &stream, &type, sizeof(type), bpacket, &offset))
+    retval =
+        vccrypt_stream_encrypt(&stream, &type, sizeof(type), bpacket, &offset);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
     }
 
     /* encrypt the size. */
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_stream_encrypt(
-                &stream, &nsize, sizeof(nsize), bpacket, &offset))
+    retval =
+        vccrypt_stream_encrypt(
+            &stream, &nsize, sizeof(nsize), bpacket, &offset);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
     }
 
     /* encrypt the payload. */
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_stream_encrypt(
-                &stream, val, size, bpacket + digest.size, &offset))
+    retval =
+        vccrypt_stream_encrypt(
+            &stream, val, size, bpacket + digest.size, &offset);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
     }
 
-    /* digest the packet header and payload. */
-    if (VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_mac_digest(
-                &mac, bpacket, sizeof(type) + sizeof(nsize)) ||
-        VCCRYPT_STATUS_SUCCESS !=
-            vccrypt_mac_digest(
-                &mac, bpacket + sizeof(type) + sizeof(nsize) + digest.size,
-                size))
+    /* digest the packet header. */
+    retval = vccrypt_mac_digest(&mac, bpacket, sizeof(type) + sizeof(nsize));
+    if (STATUS_SUCCESS != retval)
+    {
+        retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
+        goto cleanup_mac;
+    }
+
+    /* digest the packet payload. */
+    retval =
+        vccrypt_mac_digest(
+            &mac, bpacket + sizeof(type) + sizeof(nsize) + digest.size, size);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
     }
 
     /* finalize the digest. */
-    if (VCCRYPT_STATUS_SUCCESS != vccrypt_mac_finalize(&mac, &digest))
+    retval = vccrypt_mac_finalize(&mac, &digest);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_CRYPTO;
         goto cleanup_mac;
@@ -156,9 +156,8 @@ int ssock_write_authed_data(
     memcpy(bpacket + sizeof(type) + sizeof(nsize), digest.data, digest.size);
 
     /* write the packet to the socket. */
-    size_t write_size = packet.size;
-    retval = ssock_write(sock, packet.data, &write_size);
-    if (VCBLOCKCHAIN_STATUS_SUCCESS != retval || write_size != packet.size)
+    retval = psock_write_raw_data(sock, packet.data, packet.size);
+    if (STATUS_SUCCESS != retval)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
         goto cleanup_mac;
@@ -166,7 +165,6 @@ int ssock_write_authed_data(
 
     /* success. */
     retval = VCBLOCKCHAIN_STATUS_SUCCESS;
-    /* fall-through. */
 
 cleanup_mac:
     dispose((disposable_t*)&mac);

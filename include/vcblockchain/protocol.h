@@ -148,7 +148,7 @@ int vcblockchain_protocol_recvresp_handshake_request(
  */
 int vcblockchain_protocol_sendreq_handshake_ack(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    uint64_t* server_iv, vccrypt_buffer_t* shared_secret,
+    uint64_t* server_iv, const vccrypt_buffer_t* shared_secret,
     const vccrypt_buffer_t* server_challenge_nonce);
 
 /**
@@ -175,7 +175,7 @@ int vcblockchain_protocol_sendreq_handshake_ack(
  */
 int vcblockchain_protocol_sendreq_latest_block_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
  * \brief Send a transaction submission request.
@@ -205,8 +205,9 @@ int vcblockchain_protocol_sendreq_latest_block_id_get(
  */
 int vcblockchain_protocol_sendreq_transaction_submit(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id,
-    const vpr_uuid* artifact_id, const void* cert, size_t cert_size);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id, const vpr_uuid* artifact_id, const void* cert,
+    size_t cert_size);
 
 /**
  * \brief Send a block get request.
@@ -234,7 +235,8 @@ int vcblockchain_protocol_sendreq_transaction_submit(
  */
 int vcblockchain_protocol_sendreq_block_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* block_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* block_id);
 
 /**
  * \brief Send a block get next id request.
@@ -262,7 +264,8 @@ int vcblockchain_protocol_sendreq_block_get(
  */
 int vcblockchain_protocol_sendreq_block_next_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* block_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* block_id);
 
 /**
  * \brief Send a block get prev id request.
@@ -290,7 +293,8 @@ int vcblockchain_protocol_sendreq_block_next_id_get(
  */
 int vcblockchain_protocol_sendreq_block_prev_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* block_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* block_id);
 
 /**
  * \brief Send a block id by height get request.
@@ -318,7 +322,7 @@ int vcblockchain_protocol_sendreq_block_prev_id_get(
  */
 int vcblockchain_protocol_sendreq_block_id_by_height_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, uint64_t height);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset, uint64_t height);
 
 /**
  * \brief Send an artifact get first transaction id request.
@@ -345,7 +349,7 @@ int vcblockchain_protocol_sendreq_block_id_by_height_get(
  */
 int vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* artifact_id);
 
 /**
@@ -373,7 +377,7 @@ int vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
  */
 int vcblockchain_protocol_sendreq_artifact_last_txn_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* artifact_id);
 
 /**
@@ -401,7 +405,8 @@ int vcblockchain_protocol_sendreq_artifact_last_txn_id_get(
  */
 int vcblockchain_protocol_sendreq_txn_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id);
 
 /**
  * \brief Send a transaction get next id request.
@@ -428,7 +433,8 @@ int vcblockchain_protocol_sendreq_txn_get(
  */
 int vcblockchain_protocol_sendreq_txn_next_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id);
 
 /**
  * \brief Send a transaction get prev id request.
@@ -455,7 +461,8 @@ int vcblockchain_protocol_sendreq_txn_next_id_get(
  */
 int vcblockchain_protocol_sendreq_txn_prev_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id);
 
 /**
  * \brief Send a transaction get block id request.
@@ -482,7 +489,8 @@ int vcblockchain_protocol_sendreq_txn_prev_id_get(
  */
 int vcblockchain_protocol_sendreq_txn_block_id_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset, const vpr_uuid* txn_id);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* txn_id);
 
 /**
  * \brief Send a status get request.
@@ -508,7 +516,7 @@ int vcblockchain_protocol_sendreq_txn_block_id_get(
  */
 int vcblockchain_protocol_sendreq_status_get(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
  * \brief Send a connection close request.
@@ -534,7 +542,7 @@ int vcblockchain_protocol_sendreq_status_get(
  */
 int vcblockchain_protocol_sendreq_connection_close(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
  * \brief Send a latest block id assertion request.
@@ -561,7 +569,7 @@ int vcblockchain_protocol_sendreq_connection_close(
  */
 int vcblockchain_protocol_sendreq_assert_latest_block_id(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* latest_block_id);
 
 /**
@@ -588,7 +596,85 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id(
  */
 int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
-    vccrypt_buffer_t* shared_secret, uint32_t offset);
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
+
+/**
+ * \brief Send an extended API enable request.
+ *
+ * This request enables the connected entity to field extended API requests to
+ * it through the blockchain agent. The blockchain agent will authenticate and
+ * authorize other entities wishing to send requests to this entity, but from
+ * there, will only forward requests to this entity. It is up to this entity to
+ * perform any additional parameter checks on any requests it receives.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset to use for this request. It
+ *                                  should be unique per any outbound request
+ *                                  for which a response has not yet been
+ *                                  received.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended_api_enable(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset);
+
+/**
+ * \brief Send an extended API request.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset to use for this request. It
+ *                                  should be unique per any outbound request
+ *                                  for which a response has not yet been
+ *                                  received.
+ * \param entity_id                 The entity to which this request should be
+ *                                  sent.
+ * \param verb_id                   The verb id for this request.
+ * \param request_body              The body of the request to be sent.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended_api(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    const vccrypt_buffer_t* shared_secret, uint32_t offset,
+    const vpr_uuid* entity_id, const vpr_uuid* verb_id,
+    const vccrypt_buffer_t* request_body);
+
+/**
+ * \brief Send a response to an extended API request.
+ *
+ * \param sock                      The socket to which this request is written.
+ * \param suite                     The crypto suite to use for this request.
+ * \param client_iv                 Pointer to the client IV, updated by this
+ *                                  call.
+ * \param shared_secret             The shared secret to use for this request.
+ * \param offset                    The offset provided by agentd for the
+ *                                  original extended request. Unlike regular
+ *                                  offsets, these are 64-bit and are only used
+ *                                  once.
+ * \param status                    The status to pass to the client.
+ * \param response_body             The body of the response to be sent.
+ *
+ * \returns a status code indicating success or failure.
+ *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+int vcblockchain_protocol_sendreq_extended_api_response(
+    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+    const vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
+    const vccrypt_buffer_t* response_body);
 
 /**
  * \brief Receive a response from the API.
@@ -622,7 +708,7 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
  */
 int vcblockchain_protocol_recvresp(
     ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
-    vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
+    const vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
 
 /**
  * \brief Decode the header values of a response.
