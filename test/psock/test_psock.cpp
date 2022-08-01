@@ -158,6 +158,7 @@ TEST(psock_test, psock_read_authed_data_happy_path)
     EXPECT_EQ(0, memcmp(TEST_STRING, str, str_size));
 
     /* clean up. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_allocator_reclaim(rcpr_alloc, str));
     dispose((disposable_t*)&mac);
     dispose((disposable_t*)&digest);
     dispose((disposable_t*)&stream);
@@ -254,7 +255,7 @@ TEST(psock_test, psock_write_authed_data_happy_path)
     EXPECT_EQ(0, memcmp(TEST_STRING, str, str_size));
 
     /* clean up. */
-    free(str);
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_allocator_reclaim(rcpr_alloc, str));
     ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(lsock)));
     ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(rsock)));
     dispose((disposable_t*)&key);
