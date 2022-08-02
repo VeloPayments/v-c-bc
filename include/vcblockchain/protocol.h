@@ -57,6 +57,7 @@ status vcblockchain_protocol_sendreq_handshake_request(
  * \brief Receive a handshake response from the API.
  *
  * \param sock                      The socket from which this response is read.
+ * \param alloc                     The allocator to use for this operation.
  * \param suite                     The crypto suite to use to verify this
  *                                  response.
  * \param server_id                 The uuid pointer to receive the server's
@@ -119,8 +120,9 @@ status vcblockchain_protocol_sendreq_handshake_request(
  *        encountered.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_recvresp_handshake_request(
-    ssock* sock, vccrypt_suite_options_t* suite, vpr_uuid* server_id,
+status vcblockchain_protocol_recvresp_handshake_request(
+    RCPR_SYM(psock)* sock, RCPR_SYM(allocator)* a,
+    vccrypt_suite_options_t* suite, vpr_uuid* server_id,
     vccrypt_buffer_t* server_pubkey,
     const vccrypt_buffer_t* client_privkey,
     const vccrypt_buffer_t* client_key_nonce,
