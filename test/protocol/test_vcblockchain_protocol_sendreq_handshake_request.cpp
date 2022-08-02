@@ -12,17 +12,22 @@
 #include <vcblockchain/protocol.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-#include "../ssock/dummy_ssock.h"
+#include "../dummy_psock.h"
 
 using namespace std;
+
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
 
 /**
  * Test the happy path.
  */
 TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
 {
-    ssock sock;
-    vector<shared_ptr<ssock_write_params>> write_calls;
+    psock* sock;
+    rcpr_allocator* alloc;
+    vector<shared_ptr<psock_write_params>> write_calls;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     vpr_uuid client_id = { .data = {
@@ -37,6 +42,11 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
 
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        rcpr_malloc_allocator_create(&alloc));
+
     /* create the crypto suite. */
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
@@ -44,14 +54,14 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
 
     /* create the dummy socket. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void*, size_t*) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void*, size_t*) -> int {
                 return VCBLOCKCHAIN_STATUS_SUCCESS;
             },
-            [&](ssock* sock, const void* val, size_t* size) -> int {
+            [&](psock* sock, const void* val, size_t* size) -> int {
                 write_calls.push_back(
-                    make_shared<ssock_write_params>(
+                    make_shared<psock_write_params>(
                         sock, val, *size));
 
                 return VCBLOCKCHAIN_STATUS_SUCCESS;
@@ -67,7 +77,7 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
         vcblockchain_protocol_sendreq_handshake_request(
-            &sock, &suite, &client_id, &client_key_nonce,
+            sock, &suite, &client_id, &client_key_nonce,
             &client_challenge_nonce));
 
     /* the buffer data and size values should be set. */
@@ -81,15 +91,15 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     ASSERT_EQ(3U, write_calls.size());
 
     /* first call is the type. */
-    EXPECT_EQ(&sock, write_calls[0]->sock);
+    EXPECT_EQ(sock, write_calls[0]->sock);
     EXPECT_EQ(sizeof(uint32_t), write_calls[0]->buf.size());
 
     /* second call is the size. */
-    EXPECT_EQ(&sock, write_calls[1]->sock);
+    EXPECT_EQ(sock, write_calls[1]->sock);
     EXPECT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());
 
     /* the socket is the first argument. */
-    EXPECT_EQ(&sock, write_calls[2]->sock);
+    EXPECT_EQ(sock, write_calls[2]->sock);
 
     /* compute the size of the request packet payload. */
     size_t expected_payload_size =
@@ -105,9 +115,12 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     EXPECT_EQ(expected_payload_size, write_calls[2]->buf.size());
 
     /* clean up. */
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&client_key_nonce);
     dispose((disposable_t*)&client_challenge_nonce);
-    dispose((disposable_t*)&sock);
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }

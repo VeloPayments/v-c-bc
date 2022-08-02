@@ -3,7 +3,7 @@
  *
  * \brief Send a handshake request to the server.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -13,8 +13,9 @@
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/data.h>
 #include <vcblockchain/protocol/serialization.h>
-#include <vcblockchain/ssock.h>
 #include <vpr/parameters.h>
+
+RCPR_IMPORT_psock;
 
 /**
  * \brief Send a handshake request to the API.
@@ -44,8 +45,8 @@
  *        encountered.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_handshake_request(
-    ssock* sock, vccrypt_suite_options_t* suite, const vpr_uuid* client_id,
+status vcblockchain_protocol_sendreq_handshake_request(
+    psock* sock, vccrypt_suite_options_t* suite, const vpr_uuid* client_id,
     vccrypt_buffer_t* key_nonce, vccrypt_buffer_t* challenge_nonce)
 {
     int retval = 0;
@@ -109,7 +110,7 @@ int vcblockchain_protocol_sendreq_handshake_request(
 
     /* write data packet with request payload to socket. */
     size_t write_size = payload.size;
-    retval = ssock_write_data(sock, payload.data, write_size);
+    retval = psock_write_boxed_data(sock, payload.data, write_size);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
         goto cleanup_payload;
