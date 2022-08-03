@@ -10,6 +10,7 @@
 #ifndef VCBLOCKCHAIN_PROTOCOL_HEADER_GUARD
 #define VCBLOCKCHAIN_PROTOCOL_HEADER_GUARD
 
+#include <rcpr/psock.h>
 #include <vcblockchain/ssock.h>
 #include <vccrypt/suite.h>
 #include <vpr/allocator.h>
@@ -47,9 +48,10 @@ extern "C" {
  *        encountered.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_handshake_request(
-    ssock* sock, vccrypt_suite_options_t* suite, const vpr_uuid* client_id,
-    vccrypt_buffer_t* key_nonce, vccrypt_buffer_t* challenge_nonce);
+status vcblockchain_protocol_sendreq_handshake_request(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite,
+    const vpr_uuid* client_id, vccrypt_buffer_t* key_nonce,
+    vccrypt_buffer_t* challenge_nonce);
 
 /**
  * \brief Receive a handshake response from the API.
