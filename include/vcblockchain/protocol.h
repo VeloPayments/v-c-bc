@@ -11,7 +11,6 @@
 #define VCBLOCKCHAIN_PROTOCOL_HEADER_GUARD
 
 #include <rcpr/psock.h>
-#include <vcblockchain/ssock.h>
 #include <vccrypt/suite.h>
 #include <vpr/allocator.h>
 
