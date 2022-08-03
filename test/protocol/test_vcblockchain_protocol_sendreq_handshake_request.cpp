@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <gtest/gtest.h>
 #include <memory>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vpr/allocator/malloc_allocator.h>
 

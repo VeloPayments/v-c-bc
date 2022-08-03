@@ -8,10 +8,10 @@
 
 #include <cbmc/model_assert.h>
 #include <string.h>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/data.h>
 #include <vcblockchain/protocol/serialization.h>
-#include <vcblockchain/ssock.h>
 #include <vccrypt/compare.h>
 
 RCPR_IMPORT_allocator_as(rcpr);

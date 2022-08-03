@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <queue>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>

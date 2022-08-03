@@ -8,6 +8,7 @@
 
 #include <arpa/inet.h>
 #include <gtest/gtest.h>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
@@ -226,7 +227,7 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
         dummy_psock_create(
             &sock, alloc,
             [&](psock*, void* buffer, size_t* size) -> int {
-                uint32_t type = ntohl(SSOCK_DATA_TYPE_DATA_PACKET);
+                uint32_t type = ntohl(PSOCK_BOXED_TYPE_DATA);
                 switch (state)
                 {
                     /* read the type. */

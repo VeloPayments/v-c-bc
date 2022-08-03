@@ -7,6 +7,7 @@
  */
 
 #include <cbmc/model_assert.h>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/psock.h>
 

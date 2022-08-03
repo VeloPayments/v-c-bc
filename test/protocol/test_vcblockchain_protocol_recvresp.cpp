@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <queue>
+#include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/psock.h>
 #include <vpr/allocator/malloc_allocator.h>
