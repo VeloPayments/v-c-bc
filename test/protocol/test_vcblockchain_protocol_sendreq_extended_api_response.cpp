@@ -15,16 +15,21 @@
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-#include "../ssock/dummy_ssock.h"
+#include "../dummy_psock.h"
 
 using namespace std;
+
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
 
 /**
  * Test the happy path.
  */
 TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
 {
-    ssock sock;
+    psock* sock;
+    rcpr_allocator* alloc;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     const uint64_t STARTING_SERVER_IV = 1;
@@ -51,6 +56,9 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
 
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
+
     /* create a dummy response body. */
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
@@ -72,12 +80,12 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
 
     /* create the dummy socket. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void*, size_t*) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_READ;
             },
-            [&](ssock*, const void* val, size_t* size) -> int {
+            [&](psock*, const void* val, size_t* size) -> int {
                 const uint8_t* bval = (const uint8_t*)val;
 
                 for (size_t i = 0; i < *size; ++i)
@@ -94,20 +102,20 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
         vcblockchain_protocol_sendreq_extended_api_response(
-            &sock, &suite, &client_iv, &shared_secret, EXPECTED_OFFSET,
+            sock, &suite, &client_iv, &shared_secret, EXPECTED_OFFSET,
             EXPECTED_STATUS, &response_body));
 
     /* the iv should be updated. */
     EXPECT_EQ(EXPECTED_CLIENT_IV, client_iv);
 
-    /* dispose the old socket. */
-    dispose((disposable_t*)&sock);
+    /* release the old socket. */
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
 
     /* initialize the socket for reading. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void* val, size_t* size) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void* val, size_t* size) -> int {
                 uint8_t* bval = (uint8_t*)val;
 
                 if (stream.size() < *size)
@@ -121,7 +129,7 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
 
                 return VCBLOCKCHAIN_STATUS_SUCCESS;
             },
-            [&](ssock*, const void*, size_t*) -> int {
+            [&](psock*, const void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
@@ -129,7 +137,7 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, &server_iv, &shared_secret, &out));
+            sock, alloc, &suite, &server_iv, &shared_secret, &out));
 
     /* the iv should be updated. */
     EXPECT_EQ(EXPECTED_SERVER_IV, server_iv);
@@ -151,10 +159,13 @@ TEST(test_vcblockchain_protocol_sendreq_extended_api_response, happy_path)
         memcmp(req.response_body.data, response_body.data, response_body.size));
 
     /* clean up. */
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&req);
     dispose((disposable_t*)&response_body);
     dispose((disposable_t*)&out);
-    dispose((disposable_t*)&sock);
     dispose((disposable_t*)&shared_secret);
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);

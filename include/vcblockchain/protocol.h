@@ -150,8 +150,8 @@ status vcblockchain_protocol_recvresp_handshake_request(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_handshake_ack(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_handshake_ack(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     uint64_t* server_iv, const vccrypt_buffer_t* shared_secret,
     const vccrypt_buffer_t* server_challenge_nonce);
 
@@ -177,8 +177,8 @@ int vcblockchain_protocol_sendreq_handshake_ack(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_latest_block_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_latest_block_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
@@ -207,8 +207,8 @@ int vcblockchain_protocol_sendreq_latest_block_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_transaction_submit(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_transaction_submit(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id, const vpr_uuid* artifact_id, const void* cert,
     size_t cert_size);
@@ -237,8 +237,8 @@ int vcblockchain_protocol_sendreq_transaction_submit(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_block_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_block_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* block_id);
 
@@ -266,8 +266,8 @@ int vcblockchain_protocol_sendreq_block_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_block_next_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_block_next_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* block_id);
 
@@ -295,8 +295,8 @@ int vcblockchain_protocol_sendreq_block_next_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_block_prev_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_block_prev_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* block_id);
 
@@ -324,8 +324,8 @@ int vcblockchain_protocol_sendreq_block_prev_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_block_id_by_height_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_block_id_by_height_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset, uint64_t height);
 
 /**
@@ -351,8 +351,8 @@ int vcblockchain_protocol_sendreq_block_id_by_height_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* artifact_id);
 
@@ -379,8 +379,8 @@ int vcblockchain_protocol_sendreq_artifact_first_txn_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_artifact_last_txn_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_artifact_last_txn_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* artifact_id);
 
@@ -407,8 +407,8 @@ int vcblockchain_protocol_sendreq_artifact_last_txn_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_txn_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_txn_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id);
 
@@ -435,8 +435,8 @@ int vcblockchain_protocol_sendreq_txn_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_txn_next_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_txn_next_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id);
 
@@ -463,8 +463,8 @@ int vcblockchain_protocol_sendreq_txn_next_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_txn_prev_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_txn_prev_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id);
 
@@ -491,8 +491,8 @@ int vcblockchain_protocol_sendreq_txn_prev_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_txn_block_id_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_txn_block_id_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id);
 
@@ -518,8 +518,8 @@ int vcblockchain_protocol_sendreq_txn_block_id_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_status_get(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_status_get(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
@@ -544,8 +544,8 @@ int vcblockchain_protocol_sendreq_status_get(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_connection_close(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_connection_close(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
@@ -571,8 +571,8 @@ int vcblockchain_protocol_sendreq_connection_close(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_assert_latest_block_id(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_assert_latest_block_id(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* latest_block_id);
 
@@ -598,8 +598,8 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
@@ -625,8 +625,8 @@ int vcblockchain_protocol_sendreq_assert_latest_block_id_cancel(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_extended_api_enable(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_extended_api_enable(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset);
 
 /**
@@ -650,8 +650,8 @@ int vcblockchain_protocol_sendreq_extended_api_enable(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_extended_api(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_extended_api(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* entity_id, const vpr_uuid* verb_id,
     const vccrypt_buffer_t* request_body);
@@ -675,8 +675,8 @@ int vcblockchain_protocol_sendreq_extended_api(
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_extended_api_response(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_extended_api_response(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
     const vccrypt_buffer_t* response_body);
 
@@ -684,6 +684,7 @@ int vcblockchain_protocol_sendreq_extended_api_response(
  * \brief Receive a response from the API.
  *
  * \param sock                      The socket from which this response is read.
+ * \param a                         The allocator to use for this operation.
  * \param suite                     The crypto suite to use for this read.
  * \param server_iv                 Pointer to the server_iv to use, updated as
  *                                  a consequence of this call.
@@ -710,8 +711,9 @@ int vcblockchain_protocol_sendreq_extended_api_response(
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_recvresp(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
+status vcblockchain_protocol_recvresp(
+    RCPR_SYM(psock)* sock, RCPR_SYM(allocator)* a,
+    vccrypt_suite_options_t* suite, uint64_t* server_iv,
     const vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response);
 
 /**

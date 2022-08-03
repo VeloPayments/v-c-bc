@@ -9,6 +9,7 @@
 #include <cbmc/model_assert.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/serialization.h>
+#include <vcblockchain/psock.h>
 
 /**
  * \brief Send a response to an extended API request.
@@ -29,8 +30,8 @@
  *      - VCBLOCKCHAIN_STATUS_SUCCESS on success.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_sendreq_extended_api_response(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_extended_api_response(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint64_t offset, uint32_t status,
     const vccrypt_buffer_t* response_body)
 {
@@ -55,7 +56,7 @@ int vcblockchain_protocol_sendreq_extended_api_response(
 
     /* write the IPC authed data packet to the server. */
     retval =
-        ssock_write_authed_data(
+        psock_write_authed_data(
             sock, *client_iv, buffer.data, buffer.size, suite, shared_secret);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
