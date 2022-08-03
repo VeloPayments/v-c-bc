@@ -3,17 +3,22 @@
  *
  * Unit tests for receiving a response from the protocol.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
 #include <queue>
 #include <vcblockchain/protocol.h>
+#include <vcblockchain/psock.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-#include "../ssock/dummy_ssock.h"
+#include "../dummy_psock.h"
 
 using namespace std;
+
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
 
 /**
  * Verify that vcblockchain_protocol_recvresp does runtime parameter checking on
@@ -21,7 +26,8 @@ using namespace std;
  */
 TEST(test_vcblockchain_protocol_recvresp, parameter_checks)
 {
-    ssock sock;
+    psock* sock;
+    rcpr_allocator* alloc;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     vccrypt_buffer_t shared_secret;
@@ -33,6 +39,9 @@ TEST(test_vcblockchain_protocol_recvresp, parameter_checks)
 
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
+
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
     ASSERT_EQ(
@@ -47,12 +56,12 @@ TEST(test_vcblockchain_protocol_recvresp, parameter_checks)
 
     /* create the dummy socket. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void*, size_t*) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_READ;
             },
-            [&](ssock*, const void*, size_t*) -> int {
+            [&](psock*, const void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
@@ -62,26 +71,33 @@ TEST(test_vcblockchain_protocol_recvresp, parameter_checks)
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_recvresp(
-            nullptr, &suite, &server_iv, &shared_secret, &response));
+            nullptr, alloc, &suite, &server_iv, &shared_secret, &response));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_recvresp(
-            &sock, nullptr, &server_iv, &shared_secret, &response));
+            sock, nullptr, &suite, &server_iv, &shared_secret, &response));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, nullptr, &shared_secret, &response));
+            sock, alloc, nullptr, &server_iv, &shared_secret, &response));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, &server_iv, nullptr, &response));
+            sock, alloc, &suite, nullptr, &shared_secret, &response));
     EXPECT_EQ(
         VCBLOCKCHAIN_ERROR_INVALID_ARG,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, &server_iv, &shared_secret, nullptr));
+            sock, alloc, &suite, &server_iv, nullptr, &response));
+    EXPECT_EQ(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG,
+        vcblockchain_protocol_recvresp(
+            sock, alloc, &suite, &server_iv, &shared_secret, nullptr));
 
     /* cleanup. */
-    dispose((disposable_t*)&sock);
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&shared_secret);
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
@@ -102,7 +118,8 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
         0x00, 0x00, 0x00, 0x32, /* offset. */
         0x00, 0x00, 0x00, 0x17  /* status. */ };
 
-    ssock sock;
+    psock* sock;
+    rcpr_allocator* alloc;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     vccrypt_buffer_t shared_secret;
@@ -116,6 +133,9 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
 
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
+
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
     ASSERT_EQ(
@@ -133,12 +153,12 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
 
     /* create the dummy socket for writing the response. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void*, size_t*) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_READ;
             },
-            [&](ssock*, const void* vbuf, size_t* s) -> int {
+            [&](psock*, const void* vbuf, size_t* s) -> int {
                 const uint8_t* buf = (const uint8_t*)vbuf;
 
                 for (size_t i = 0; i < *s; ++i)
@@ -152,17 +172,17 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
     /* write the response to the dummy socket. */
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
-        ssock_write_authed_data(
-            &sock, server_iv, RESPONSE, sizeof(RESPONSE), &suite,
+        psock_write_authed_data(
+            sock, server_iv, RESPONSE, sizeof(RESPONSE), &suite,
             &shared_secret));
 
     /* reset the dummy socket. */
-    dispose((disposable_t*)&sock);
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void* vbuf, size_t* s) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void* vbuf, size_t* s) -> int {
                 uint8_t* buf = (uint8_t*)vbuf;
 
                 if (stream_bytes.size() < *s)
@@ -176,7 +196,7 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
 
                 return VCBLOCKCHAIN_STATUS_SUCCESS;
             },
-            [&](ssock*, const void*, size_t*) -> int {
+            [&](psock*, const void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
@@ -188,7 +208,7 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, &server_iv, &shared_secret, &response));
+            sock, alloc, &suite, &server_iv, &shared_secret, &response));
 
     /* the response should be populated with RESPONSE above. */
     ASSERT_NE(nullptr, response.data);
@@ -199,7 +219,10 @@ TEST(test_vcblockchain_protocol_recvresp, happy_path)
     EXPECT_EQ(EXPECTED_POST_IV, server_iv);
 
     /* cleanup. */
-    dispose((disposable_t*)&sock);
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&shared_secret);
     dispose((disposable_t*)&response);
     dispose((disposable_t*)&suite);

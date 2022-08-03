@@ -3,7 +3,7 @@
  *
  * Unit tests for writing the handshake ack to a server socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
@@ -13,16 +13,21 @@
 #include <vcblockchain/protocol.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-#include "../ssock/dummy_ssock.h"
+#include "../dummy_psock.h"
 
 using namespace std;
+
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
 
 /**
  * Test the happy path.
  */
 TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
 {
-    ssock sock;
+    psock* sock;
+    rcpr_allocator* alloc;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     const uint64_t EXPECTED_CLIENT_IV = 2;
@@ -50,6 +55,9 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
 
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
+
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
     ASSERT_EQ(
@@ -98,12 +106,12 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
 
     /* create the dummy socket. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void*, size_t*) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_READ;
             },
-            [&](ssock*, const void* val, size_t* size) -> int {
+            [&](psock*, const void* val, size_t* size) -> int {
                 const uint8_t* bval = (const uint8_t*)val;
 
                 for (size_t i = 0; i < *size; ++i)
@@ -119,21 +127,21 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
     ASSERT_EQ(
         VCCRYPT_STATUS_SUCCESS,
         vcblockchain_protocol_sendreq_handshake_ack(
-            &sock, &suite, &client_iv, &server_iv, &shared_secret,
+            sock, &suite, &client_iv, &server_iv, &shared_secret,
             &server_challenge_nonce));
 
     /* the nonces should be set. */
     EXPECT_EQ(EXPECTED_CLIENT_IV, client_iv);
     EXPECT_EQ(EXPECTED_SERVER_IV_AFTER_SENDREQ, server_iv);
 
-    /* dispose the old socket. */
-    dispose((disposable_t*)&sock);
+    /* release the old socket. */
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
 
     /* initialize the socket for reading. */
     ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void* val, size_t* size) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void* val, size_t* size) -> int {
                 uint8_t* bval = (uint8_t*)val;
 
                 if (stream.size() < *size)
@@ -147,7 +155,7 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
 
                 return VCBLOCKCHAIN_STATUS_SUCCESS;
             },
-            [&](ssock*, const void*, size_t*) -> int {
+            [&](psock*, const void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
@@ -158,14 +166,17 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_recvresp(
-            &sock, &suite, &server_iv, &shared_secret, &out));
+            sock, alloc, &suite, &server_iv, &shared_secret, &out));
 
     /* the digest should match. */
     ASSERT_EQ(digest.size, out.size);
     EXPECT_EQ(0, memcmp(digest.data, out.data, digest.size));
 
     /* clean up. */
-    dispose((disposable_t*)&sock);
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&out);
     dispose((disposable_t*)&shared_secret);
     dispose((disposable_t*)&server_challenge_nonce);

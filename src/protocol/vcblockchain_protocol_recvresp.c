@@ -3,17 +3,19 @@
  *
  * \brief Receive a request response from the server.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <string.h>
 #include <vcblockchain/protocol.h>
+#include <vcblockchain/psock.h>
 
 /**
  * \brief Receive a response from the API.
  *
  * \param sock                      The socket from which this response is read.
+ * \param a                         The allocator to use for this operation.
  * \param suite                     The crypto suite to use for this read.
  * \param server_iv                 Pointer to the server_iv to use, updated as
  *                                  a consequence of this call.
@@ -40,21 +42,23 @@
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_recvresp(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* server_iv,
+status vcblockchain_protocol_recvresp(
+    RCPR_SYM(psock)* sock, RCPR_SYM(allocator)* a,
+    vccrypt_suite_options_t* suite, uint64_t* server_iv,
     const vccrypt_buffer_t* shared_secret, vccrypt_buffer_t* response)
 {
     int retval;
 
     /* parameter sanity checks. */
     MODEL_ASSERT(NULL != sock);
+    MODEL_ASSERT(NULL != a);
     MODEL_ASSERT(NULL != suite);
     MODEL_ASSERT(NULL != server_iv);
     MODEL_ASSERT(NULL != shared_secret);
     MODEL_ASSERT(NULL != response);
 
     /* runtime parameter checks. */
-    if (NULL == sock || NULL == suite || NULL == server_iv
+    if (NULL == sock || NULL == a || NULL == suite || NULL == server_iv
      || NULL == shared_secret || NULL == response)
     {
         retval = VCBLOCKCHAIN_ERROR_INVALID_ARG;
@@ -65,8 +69,8 @@ int vcblockchain_protocol_recvresp(
     void* val = NULL;
     uint32_t size = 0U;
     retval =
-        ssock_read_authed_data(
-            sock, suite->alloc_opts, *server_iv, &val, &size, suite,
+        psock_read_authed_data(
+            sock, a, *server_iv, &val, &size, suite,
             shared_secret);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {

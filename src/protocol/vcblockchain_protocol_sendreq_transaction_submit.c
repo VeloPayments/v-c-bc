@@ -3,12 +3,13 @@
  *
  * \brief Send a transaction submit request to the server.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/serialization.h>
+#include <vcblockchain/psock.h>
 
 /**
  * \brief Send a transaction submission request.
@@ -36,8 +37,8 @@
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_transaction_submit(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_transaction_submit(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     const vccrypt_buffer_t* shared_secret, uint32_t offset,
     const vpr_uuid* txn_id, const vpr_uuid* artifact_id, const void* cert,
     size_t cert_size)
@@ -66,7 +67,7 @@ int vcblockchain_protocol_sendreq_transaction_submit(
 
     /* write the IPC authed data packet to the server. */
     retval =
-        ssock_write_authed_data(
+        psock_write_authed_data(
             sock, *client_iv, buffer.data, buffer.size, suite, shared_secret);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {

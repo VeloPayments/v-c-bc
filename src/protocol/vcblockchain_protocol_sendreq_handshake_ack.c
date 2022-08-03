@@ -3,11 +3,12 @@
  *
  * \brief Send a handshake ack request to the server.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vcblockchain/protocol.h>
+#include <vcblockchain/psock.h>
 
 /**
  * \brief Send a handshake acknowledge to the API.
@@ -29,8 +30,8 @@
  *        out-of-memory error.
  *      - a non-zero error response if something else has failed.
  */
-int vcblockchain_protocol_sendreq_handshake_ack(
-    ssock* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
+status vcblockchain_protocol_sendreq_handshake_ack(
+    RCPR_SYM(psock)* sock, vccrypt_suite_options_t* suite, uint64_t* client_iv,
     uint64_t* server_iv, const vccrypt_buffer_t* shared_secret,
     const vccrypt_buffer_t* server_challenge_nonce)
 {
@@ -86,7 +87,7 @@ int vcblockchain_protocol_sendreq_handshake_ack(
 
     /* write the IPC authed data packet to the server. */
     retval =
-        ssock_write_authed_data(
+        psock_write_authed_data(
             sock, *client_iv, digest.data, digest.size, suite, shared_secret);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
