@@ -12,16 +12,21 @@
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-#include "../ssock/dummy_ssock.h"
+#include "../dummy_psock.h"
 
 using namespace std;
+
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
 
 /**
  * Test the happy path.
  */
 TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
 {
-    ssock sock;
+    psock* sock;
+    rcpr_allocator* alloc;
     allocator_options_t alloc_opts;
     vccrypt_suite_options_t suite;
     vccrypt_prng_context_t prng;
@@ -53,6 +58,9 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
 
     /* create an allocator instance. */
     malloc_allocator_options_init(&alloc_opts);
+
+    /* create an RCPR allocator instance. */
+    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
     ASSERT_EQ(
@@ -215,9 +223,9 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
     int state = 0;
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_ssock_init(
-            &sock,
-            [&](ssock*, void* buffer, size_t* size) -> int {
+        dummy_psock_create(
+            &sock, alloc,
+            [&](psock*, void* buffer, size_t* size) -> int {
                 uint32_t type = ntohl(SSOCK_DATA_TYPE_DATA_PACKET);
                 switch (state)
                 {
@@ -247,7 +255,7 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
                         return VCBLOCKCHAIN_ERROR_SSOCK_READ;
                 }
             },
-            [&](ssock*, const void*, size_t*) -> int {
+            [&](psock*, const void*, size_t*) -> int {
                 return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
             }));
 
@@ -255,7 +263,7 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
     ASSERT_EQ(
         VCBLOCKCHAIN_STATUS_SUCCESS,
         vcblockchain_protocol_recvresp_handshake_request(
-            &sock, &suite, &agent_id, &read_server_pubkey,
+            sock, alloc, &suite, &agent_id, &read_server_pubkey,
             &client_privkey, &client_key_nonce, &client_challenge_nonce,
             &read_server_challenge_nonce, &read_shared_secret, &offset,
             &status));
@@ -297,7 +305,10 @@ TEST(test_vcblockchain_protocol_recvresp_handshake_request, happy_path)
             shared_secret.data, read_shared_secret.data, shared_secret.size));
 
     /* clean up. */
-    dispose((disposable_t*)&sock);
+    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    ASSERT_EQ(
+        STATUS_SUCCESS,
+        resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&prng);
     dispose((disposable_t*)&cipher_key_agreement);
     dispose((disposable_t*)&mac);

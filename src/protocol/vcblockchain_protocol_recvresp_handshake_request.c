@@ -14,10 +14,15 @@
 #include <vcblockchain/ssock.h>
 #include <vccrypt/compare.h>
 
+RCPR_IMPORT_allocator_as(rcpr);
+RCPR_IMPORT_psock;
+RCPR_IMPORT_resource;
+
 /**
  * \brief Receive a handshake response from the API.
  *
  * \param sock                      The socket from which this response is read.
+ * \param alloc                     The allocator to use for this operation.
  * \param suite                     The crypto suite to use to verify this
  *                                  response.
  * \param server_id                 The uuid pointer to receive the server's
@@ -80,8 +85,9 @@
  *        encountered.
  *      - a non-zero error code on failure.
  */
-int vcblockchain_protocol_recvresp_handshake_request(
-    ssock* sock, vccrypt_suite_options_t* suite, vpr_uuid* server_id,
+status vcblockchain_protocol_recvresp_handshake_request(
+    RCPR_SYM(psock)* sock, RCPR_SYM(allocator)* a,
+    vccrypt_suite_options_t* suite, vpr_uuid* server_id,
     vccrypt_buffer_t* server_pubkey,
     const vccrypt_buffer_t* client_privkey,
     const vccrypt_buffer_t* client_key_nonce,
@@ -89,10 +95,11 @@ int vcblockchain_protocol_recvresp_handshake_request(
     vccrypt_buffer_t* server_challenge_nonce,
     vccrypt_buffer_t* shared_secret, uint32_t* offset, uint32_t* status)
 {
-    int retval = 0;
+    int retval = 0, release_retval = 0;
 
     /* parameter sanity check. */
     MODEL_ASSERT(NULL != sock);
+    MODEL_ASSERT(NULL != a);
     MODEL_ASSERT(NULL != suite);
     MODEL_ASSERT(NULL != server_id);
     MODEL_ASSERT(NULL != server_pubkey);
@@ -106,8 +113,8 @@ int vcblockchain_protocol_recvresp_handshake_request(
 
     /* read a data packet from the socket. */
     void* val = NULL;
-    uint32_t size = 0;
-    retval = ssock_read_data(sock, suite->alloc_opts, &val, &size);
+    size_t size = 0;
+    retval = psock_read_boxed_data(sock, a, &val, &size);
     if (VCBLOCKCHAIN_STATUS_SUCCESS != retval)
     {
         goto done;
@@ -251,7 +258,11 @@ cleanup_resp:
 
 cleanup_val:
     memset(val, 0, size);
-    free(val);
+    release_retval = rcpr_allocator_reclaim(a, val);
+    if (STATUS_SUCCESS != release_retval)
+    {
+        retval = release_retval;
+    }
 
 done:
     return retval;
