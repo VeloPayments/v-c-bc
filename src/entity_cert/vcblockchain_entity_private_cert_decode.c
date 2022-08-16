@@ -17,15 +17,6 @@
 RCPR_IMPORT_resource;
 
 /* forward decls. */
-static bool dummy_txn_resolver(
-    void*, void*, const uint8_t*, const uint8_t*, vccrypt_buffer_t*, bool*);
-static int32_t dummy_artifact_state_resolver(
-    void*, void*, const uint8_t*, vccrypt_buffer_t*);
-static int dummy_contract_resolver(
-    void*, void*, const uint8_t*, const uint8_t*, vccert_contract_closure_t*);
-static bool dummy_key_resolver(
-    void*, void*, uint64_t, const uint8_t*, vccrypt_buffer_t*,
-    vccrypt_buffer_t*);
 static status vcblockchain_entity_private_cert_resource_release(resource* r);
 
 /**
@@ -61,10 +52,8 @@ int vcblockchain_entity_private_cert_decode(
 
     /* create simple parser options. */
     retval =
-        vccert_parser_options_init(
-            &parser_options, suite->alloc_opts, suite, &dummy_txn_resolver,
-            &dummy_artifact_state_resolver, &dummy_contract_resolver,
-            &dummy_key_resolver, NULL);
+        vccert_parser_options_simple_init(
+            &parser_options, suite->alloc_opts, suite);
     if (VCCERT_STATUS_SUCCESS != retval)
     {
         goto done;
@@ -283,47 +272,6 @@ cleanup_parser_options:
 
 done:
     return retval;
-}
-
-/**
- * \brief Dummy transaction resolver for parser options.
- */
-static bool dummy_txn_resolver(
-    void* UNUSED(a), void* UNUSED(b), const uint8_t* UNUSED(c),
-    const uint8_t* UNUSED(d), vccrypt_buffer_t* UNUSED(e), bool* UNUSED(f))
-{
-    return false;
-}
-
-/**
- * \brief Dummy artifact state resolver for parser options.
- */
-static int32_t dummy_artifact_state_resolver(
-    void* UNUSED(a), void* UNUSED(b), const uint8_t* UNUSED(c),
-    vccrypt_buffer_t* UNUSED(d))
-{
-    return -1;
-}
-
-/**
- * \brief Dummy contract resolver for parser options.
- */
-static int dummy_contract_resolver(
-    void* UNUSED(a), void* UNUSED(b), const uint8_t* UNUSED(c),
-    const uint8_t* UNUSED(d), vccert_contract_closure_t* UNUSED(e))
-{
-    return -1;
-}
-
-/**
- * \brief Dummy key resolver for parser options.
- */
-static bool dummy_key_resolver(
-    void* UNUSED(a), void* UNUSED(b), uint64_t UNUSED(c),
-    const uint8_t* UNUSED(d), vccrypt_buffer_t* UNUSED(e),
-    vccrypt_buffer_t* UNUSED(f))
-{
-    return false;
 }
 
 /**
