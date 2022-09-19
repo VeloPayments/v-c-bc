@@ -81,8 +81,11 @@ int vcblockchain_protocol_encode_req_extended_api_response(
     barr += sizeof(net_status);
 
     /* write the response buffer. */
-    memcpy(barr, response_body->data, response_body->size);
-    barr += response_body->size;
+    if (NULL != response_body->data && response_body->size > 0)
+    {
+        memcpy(barr, response_body->data, response_body->size);
+        barr += response_body->size;
+    }
 
     /* success. */
     /* buffer is owned by the caller on success. */
