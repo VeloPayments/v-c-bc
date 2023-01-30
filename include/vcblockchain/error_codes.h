@@ -96,6 +96,11 @@ extern "C" {
 #define VCBLOCKCHAIN_ERROR_INVALID_ADDRESS 0x510c
 
 /**
+ * \brief The address could not be resolved.
+ */
+#define VCBLOCKCHAIN_ERROR_INET_RESOLUTION_FAILURE 0x510d
+
+/**
  * @}
  */
 
