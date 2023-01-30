@@ -48,4 +48,4 @@ status FN_DECL_MUST_CHECK vcblockchain_inet_resolve_address(
 }
 #endif /*__cplusplus*/
 
-#endif VCBLOCKCHAIN_INET_HEADER_GUARD
+#endif /*VCBLOCKCHAIN_INET_HEADER_GUARD*/
