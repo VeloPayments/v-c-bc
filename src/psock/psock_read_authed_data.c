@@ -146,7 +146,7 @@ int psock_read_authed_data(
     /* verify that the size makes sense. */
     memcpy(&nsize, dheader + sizeof(type), sizeof(nsize));
     *size = ntohl(nsize);
-    if (*size > 10ULL * 1024ULL * 1024ULL /* 10 MB */)
+    if (*size > 250ULL * 1024ULL * 1024ULL /* 250 MB */)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_UNAUTHORIZED_PACKET;
         goto cleanup_mac;
