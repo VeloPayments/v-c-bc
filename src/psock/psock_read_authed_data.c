@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <vcblockchain/error_codes.h>
+#include <vcblockchain/limits.h>
 #include <vcblockchain/psock.h>
 #include <vccrypt/compare.h>
 
@@ -146,7 +147,7 @@ int psock_read_authed_data(
     /* verify that the size makes sense. */
     memcpy(&nsize, dheader + sizeof(type), sizeof(nsize));
     *size = ntohl(nsize);
-    if (*size > 250ULL * 1024ULL * 1024ULL /* 250 MB */)
+    if (*size > VCBLOCKCHAIN_LIMIT_MAXIMUM_ENCRYPTED_PACKET_SIZE)
     {
         retval = VCBLOCKCHAIN_ERROR_SSOCK_UNAUTHORIZED_PACKET;
         goto cleanup_mac;
