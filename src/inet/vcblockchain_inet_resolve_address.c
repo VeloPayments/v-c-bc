@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <cbmc/model_assert.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <rcpr/string.h>
 #include <string.h>
 #include <vcblockchain/error_codes.h>
