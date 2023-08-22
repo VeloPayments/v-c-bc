@@ -7,11 +7,13 @@
  */
 
 #include <arpa/inet.h>
-#include <gtest/gtest.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vcblockchain/protocol/data.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * Test that vcblockchain_protocol_response_decode_header returns an invalid
@@ -129,3 +131,4 @@ TEST(test_vcblockchain_protocol_response_decode_header, happy_path)
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

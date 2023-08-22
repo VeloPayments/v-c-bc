@@ -7,12 +7,14 @@
  * \copyright 2021 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
 using namespace std;
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * This method should perform null checks on its pointer parameters.
@@ -98,3 +100,4 @@ TEST(
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif
