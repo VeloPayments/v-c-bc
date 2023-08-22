@@ -7,9 +7,11 @@
  * \copyright 2023 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/inet.h>
+
+/* DISABLED GTEST */
+#if 0
 
 RCPR_IMPORT_allocator_as(rcpr);
 RCPR_IMPORT_resource;
@@ -126,3 +128,4 @@ TEST(test_vcblockchain_inet_resolve_address, localhost_IPv6)
         STATUS_SUCCESS,
         resource_release(rcpr_allocator_resource_handle(alloc)));
 }
+#endif

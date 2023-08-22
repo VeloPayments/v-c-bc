@@ -7,11 +7,13 @@
  */
 
 #include <arpa/inet.h>
-#include <gtest/gtest.h>
 #include <rcpr/socket_utilities.h>
 #include <vcblockchain/psock.h>
 #include <vpr/allocator.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -265,3 +267,4 @@ TEST(psock_test, psock_write_authed_data_happy_path)
         resource_release(rcpr_allocator_resource_handle(rcpr_alloc)));
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

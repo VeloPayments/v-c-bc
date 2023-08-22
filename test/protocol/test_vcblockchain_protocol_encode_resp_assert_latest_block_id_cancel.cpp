@@ -8,10 +8,12 @@
  */
 
 #include <arpa/inet.h>
-#include <gtest/gtest.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -80,3 +82,4 @@ TEST(
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

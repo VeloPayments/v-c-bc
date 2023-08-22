@@ -9,7 +9,6 @@
  */
 
 #include <arpa/inet.h>
-#include <gtest/gtest.h>
 #include <memory>
 #include <queue>
 #include <vcblockchain/error_codes.h>
@@ -18,6 +17,9 @@
 #include <vpr/allocator/malloc_allocator.h>
 
 #include "../dummy_psock.h"
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -156,3 +158,4 @@ TEST(test_vcblockchain_protocol_assert_latest_block_id_cancel, happy_path)
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

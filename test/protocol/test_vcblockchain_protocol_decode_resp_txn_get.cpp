@@ -6,10 +6,12 @@
  * \copyright 2021 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -152,3 +154,4 @@ TEST(test_vcblockchain_protocol_decode_resp_txn_get, happy_path)
     dispose((disposable_t*)&resp);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

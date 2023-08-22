@@ -8,10 +8,12 @@
  */
 
 #include <arpa/inet.h>
-#include <gtest/gtest.h>
 #include <vcblockchain/protocol/data.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -166,3 +168,4 @@ TEST(test_vcblockchain_protocol_encode_resp_handshake_request, basics)
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }
+#endif

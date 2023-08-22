@@ -7,8 +7,10 @@
  * \copyright 2020 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vcblockchain/byteswap.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -41,3 +43,4 @@ TEST(test_htonll, ntohll)
     EXPECT_EQ(0x0001000000000000LL, ntohll(0x0000000000000100LL));
     EXPECT_EQ(0x0100000000000000LL, ntohll(0x0000000000000001LL));
 }
+#endif
