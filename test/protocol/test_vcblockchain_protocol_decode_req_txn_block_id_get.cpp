@@ -4,58 +4,59 @@
  *
  * Unit tests for decoding the txn block id get request.
  *
- * \copyright 2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2021-2023 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <cstring>
+#include <minunit/minunit.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-/* DISABLED GTEST */
-#if 0
-
 using namespace std;
+
+TEST_SUITE(test_vcblockchain_protocol_decode_req_txn_block_id_get);
 
 /**
  * This method should perform null checks on its pointer parameters.
  */
-TEST(test_vcblockchain_protocol_decode_req_txn_block_id_get, parameter_check)
+TEST(parameter_check)
 {
     const uint8_t EXPECTED_PAYLOAD[4] = { 0x00, 0x01, 0x02, 0x03 };
     size_t EXPECTED_PAYLOAD_SIZE = sizeof(EXPECTED_PAYLOAD);
     protocol_req_txn_block_id_get req;
 
     /* This method performs null checks on pointer parameters. */
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_decode_req_txn_block_id_get(
-            nullptr, EXPECTED_PAYLOAD, EXPECTED_PAYLOAD_SIZE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_decode_req_txn_block_id_get(
-            &req, nullptr, EXPECTED_PAYLOAD_SIZE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_decode_req_txn_block_id_get(
+                    nullptr, EXPECTED_PAYLOAD, EXPECTED_PAYLOAD_SIZE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_decode_req_txn_block_id_get(
+                    &req, nullptr, EXPECTED_PAYLOAD_SIZE));
 }
 
 /**
  * This method should verify the payload size.
  */
-TEST(test_vcblockchain_protocol_decode_req_txn_block_id_get, payload_size)
+TEST(payload_size)
 {
     const uint8_t EXPECTED_PAYLOAD[4] = { 0x00, 0x01, 0x02, 0x03 };
     size_t EXPECTED_PAYLOAD_SIZE = sizeof(EXPECTED_PAYLOAD);
     protocol_req_txn_block_id_get req;
 
     /* This method performs null checks on pointer parameters. */
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_decode_req_txn_block_id_get(
-            &req, EXPECTED_PAYLOAD, EXPECTED_PAYLOAD_SIZE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_decode_req_txn_block_id_get(
+                    &req, EXPECTED_PAYLOAD, EXPECTED_PAYLOAD_SIZE));
 }
 
 /**
  * This method can decode a properly encoded request message.
  */
-TEST(test_vcblockchain_protocol_decode_req_txn_block_id_get, happy_path)
+TEST(happy_path)
 {
     const uint32_t EXPECTED_OFFSET = 21;
     const vpr_uuid EXPECTED_TXN_ID = { .data = {
@@ -69,30 +70,29 @@ TEST(test_vcblockchain_protocol_decode_req_txn_block_id_get, happy_path)
     malloc_allocator_options_init(&alloc_opts);
 
     /* we can encode a message. */
-    ASSERT_EQ(
-        VCBLOCKCHAIN_STATUS_SUCCESS,
-        vcblockchain_protocol_encode_req_txn_block_id_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, &EXPECTED_TXN_ID));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == vcblockchain_protocol_encode_req_txn_block_id_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, &EXPECTED_TXN_ID));
 
     /* precondition: the request buffer is zeroed out. */
     memset(&req, 0, sizeof(req));
 
     /* We can decode this message. */
-    ASSERT_EQ(
-        VCBLOCKCHAIN_STATUS_SUCCESS,
-        vcblockchain_protocol_decode_req_txn_block_id_get(
-            &req, buffer.data, buffer.size));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == vcblockchain_protocol_decode_req_txn_block_id_get(
+                    &req, buffer.data, buffer.size));
 
     /* the request id is set correctly. */
-    EXPECT_EQ(PROTOCOL_REQ_ID_TRANSACTION_ID_GET_BLOCK_ID, req.request_id);
+    TEST_EXPECT(PROTOCOL_REQ_ID_TRANSACTION_ID_GET_BLOCK_ID == req.request_id);
     /* the offset is set correctly. */
-    EXPECT_EQ(EXPECTED_OFFSET, req.offset);
+    TEST_EXPECT(EXPECTED_OFFSET == req.offset);
     /* the block id is set correctly. */
-    EXPECT_EQ(0, memcmp(&req.txn_id, &EXPECTED_TXN_ID, 16));
+    TEST_EXPECT(0 == memcmp(&req.txn_id, &EXPECTED_TXN_ID, 16));
 
     /* clean up. */
     dispose((disposable_t*)&req);
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
