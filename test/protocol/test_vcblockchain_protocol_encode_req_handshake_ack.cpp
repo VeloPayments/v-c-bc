@@ -3,21 +3,22 @@
  *
  * Unit tests for encoding the request portion of the handshake ack request.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2023 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <cstring>
+#include <minunit/minunit.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-/* DISABLED GTEST */
-#if 0
-
 using namespace std;
+
+TEST_SUITE(test_vcblockchain_protocol_encode_req_handshake_ack);
 
 /**
  * Test the basics of the encoding.
  */
-TEST(test_vcblockchain_protocol_encode_req_handshake_ack, basics)
+TEST(basics)
 {
     const uint8_t EXPECTED_MAC[32] = {
         0xef, 0xeb, 0xbe, 0x57, 0x8c, 0x6e, 0x47, 0x4d,
@@ -36,15 +37,16 @@ TEST(test_vcblockchain_protocol_encode_req_handshake_ack, basics)
     malloc_allocator_options_init(&alloc_opts);
 
     /* create the crypto suite. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_options_init(&suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_options_init(
+                    &suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
 
     /* create a buffer for holding the expected mac. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_buffer_init(
-            &mac, &alloc_opts, sizeof(EXPECTED_MAC)));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_buffer_init(
+                    &mac, &alloc_opts, sizeof(EXPECTED_MAC)));
     /* set the mac value. */
     memcpy(mac.data, EXPECTED_MAC, sizeof(EXPECTED_MAC));
 
@@ -53,21 +55,22 @@ TEST(test_vcblockchain_protocol_encode_req_handshake_ack, basics)
     out.size = 0U;
 
     /* encoding the handshake ack request should succeed. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vcblockchain_protocol_encode_req_handshake_ack(&out, &suite, &mac));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vcblockchain_protocol_encode_req_handshake_ack(
+                    &out, &suite, &mac));
 
     /* the out data and size should be set. */
-    ASSERT_NE(nullptr, out.data);
-    ASSERT_NE(0U, out.size);
+    TEST_ASSERT(nullptr != out.data);
+    TEST_ASSERT(0U != out.size);
 
     /* get a byte pointer to the output buffer. */
     const uint8_t* buf = (const uint8_t*)out.data;
     size_t size = out.size;
 
     /* the buffer should hold the mac. */
-    ASSERT_EQ(size, mac.size);
-    EXPECT_EQ(0, memcmp(buf, mac.data, mac.size));
+    TEST_ASSERT(size == mac.size);
+    TEST_EXPECT(0 == memcmp(buf, mac.data, mac.size));
 
     /* clean up. */
     dispose((disposable_t*)&out);
@@ -75,4 +78,3 @@ TEST(test_vcblockchain_protocol_encode_req_handshake_ack, basics)
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
