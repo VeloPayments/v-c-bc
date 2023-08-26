@@ -4,24 +4,25 @@
  *
  * Unit tests for encoding the txn get response.
  *
- * \copyright 2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2021-2023 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
+#include <cstring>
+#include <minunit/minunit.h>
 #include <vcblockchain/byteswap.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-/* DISABLED GTEST */
-#if 0
-
 using namespace std;
+
+TEST_SUITE(test_vcblockchain_protocol_encode_resp_txn_get);
 
 /**
  * This method should perform null checks on its pointer parameters.
  */
-TEST(test_vcblockchain_protocol_encode_resp_txn_get, parameter_checks)
+TEST(parameter_checks)
 {
     const uint32_t EXPECTED_OFFSET = 26;
     const uint32_t EXPECTED_STATUS = 11;
@@ -52,70 +53,74 @@ TEST(test_vcblockchain_protocol_encode_resp_txn_get, parameter_checks)
     malloc_allocator_options_init(&alloc_opts);
 
     /* this method performs null checks on pointer parameters. */
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            nullptr, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, nullptr, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            nullptr, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, nullptr,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            nullptr, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, nullptr, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, nullptr,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, nullptr,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    nullptr, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE,
+                    EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE,
+                    EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, nullptr, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE,
+                    EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE,
+                    EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    nullptr, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE,
+                    EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE,
+                    EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, nullptr,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE,
+                    EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE,
+                    EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    nullptr, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
+                    EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
+                    EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, nullptr, &EXPECTED_BLOCK_ID,
+                    EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
+                    EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, nullptr,
+                    EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
+                    EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE, nullptr,
+                    EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
 
     /* clean up. */
     dispose((disposable_t*)&alloc_opts);
@@ -124,7 +129,7 @@ TEST(test_vcblockchain_protocol_encode_resp_txn_get, parameter_checks)
 /**
  * This method should encode the response message.
  */
-TEST(test_vcblockchain_protocol_encode_resp_txn_get, happy_path)
+TEST(happy_path)
 {
     const uint32_t EXPECTED_OFFSET = 26;
     const uint32_t EXPECTED_STATUS = 11;
@@ -158,51 +163,50 @@ TEST(test_vcblockchain_protocol_encode_resp_txn_get, happy_path)
     buffer.data = nullptr; buffer.size = 0;
 
     /* encoding should succeed. */
-    ASSERT_EQ(
-        VCBLOCKCHAIN_STATUS_SUCCESS,
-        vcblockchain_protocol_encode_resp_txn_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
-            &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
-            &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID, &EXPECTED_BLOCK_ID,
-            EXPECTED_SER_TXN_CERT_SIZE, EXPECTED_TXN_CERT,
-            EXPECTED_TXN_CERT_SIZE, EXPECTED_TXN_STATE));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == vcblockchain_protocol_encode_resp_txn_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS,
+                    &EXPECTED_TXN_ID, &EXPECTED_PREV_TXN_ID,
+                    &EXPECTED_NEXT_TXN_ID, &EXPECTED_ARTIFACT_ID,
+                    &EXPECTED_BLOCK_ID, EXPECTED_SER_TXN_CERT_SIZE,
+                    EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE,
+                    EXPECTED_TXN_STATE));
 
     /* the buffer should not be null. */
-    ASSERT_NE(nullptr, buffer.data);
-    ASSERT_EQ(
-        3 * sizeof(uint32_t) + 5 * 16 + 1 * 8 + 1 * 4
-        + EXPECTED_TXN_CERT_SIZE,
-        buffer.size);
+    TEST_ASSERT(nullptr != buffer.data);
+    TEST_ASSERT(
+        3 * sizeof(uint32_t) + 5 * 16 + 1 * 8 + 1 * 4 + EXPECTED_TXN_CERT_SIZE
+            == buffer.size);
 
     /* check the inteeger values. */
     uint32_t* uarr = (uint32_t*)buffer.data;
-    EXPECT_EQ(htonl(PROTOCOL_REQ_ID_TRANSACTION_BY_ID_GET), uarr[0]);
-    EXPECT_EQ(htonl(EXPECTED_STATUS), uarr[1]);
-    EXPECT_EQ(htonl(EXPECTED_OFFSET), uarr[2]);
+    TEST_EXPECT(htonl(PROTOCOL_REQ_ID_TRANSACTION_BY_ID_GET) == uarr[0]);
+    TEST_EXPECT(htonl(EXPECTED_STATUS) == uarr[1]);
+    TEST_EXPECT(htonl(EXPECTED_OFFSET) == uarr[2]);
 
     /* check the uuids. */
     uint8_t* barr = (uint8_t*)(uarr + 3);
-    EXPECT_EQ(0, memcmp(barr,      &EXPECTED_TXN_ID, 16));
-    EXPECT_EQ(0, memcmp(barr + 16, &EXPECTED_PREV_TXN_ID, 16));
-    EXPECT_EQ(0, memcmp(barr + 32, &EXPECTED_NEXT_TXN_ID, 16));
-    EXPECT_EQ(0, memcmp(barr + 48, &EXPECTED_ARTIFACT_ID, 16));
-    EXPECT_EQ(0, memcmp(barr + 64, &EXPECTED_BLOCK_ID, 16));
+    TEST_EXPECT(0 == memcmp(barr,      &EXPECTED_TXN_ID, 16));
+    TEST_EXPECT(0 == memcmp(barr + 16, &EXPECTED_PREV_TXN_ID, 16));
+    TEST_EXPECT(0 == memcmp(barr + 32, &EXPECTED_NEXT_TXN_ID, 16));
+    TEST_EXPECT(0 == memcmp(barr + 48, &EXPECTED_ARTIFACT_ID, 16));
+    TEST_EXPECT(0 == memcmp(barr + 64, &EXPECTED_BLOCK_ID, 16));
 
     /* check the 64-bit values. */
     uint64_t net_ser_txn_size = htonll(EXPECTED_SER_TXN_CERT_SIZE);
-    EXPECT_EQ(0, memcmp(barr + 80, &net_ser_txn_size, 8));
+    TEST_EXPECT(0 == memcmp(barr + 80, &net_ser_txn_size, 8));
 
     /* check the 32-bit values. */
     uint64_t net_txn_state = htonl(EXPECTED_TXN_STATE);
-    EXPECT_EQ(0, memcmp(barr + 88, &net_txn_state, 4));
+    TEST_EXPECT(0 == memcmp(barr + 88, &net_txn_state, 4));
 
     /* check the txn certificate. */
-    EXPECT_EQ(
-        0,
-        memcmp(barr + 92, EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE));
+    TEST_EXPECT(
+        0
+            == memcmp(barr + 92, EXPECTED_TXN_CERT, EXPECTED_TXN_CERT_SIZE));
 
     /* clean up. */
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
