@@ -4,23 +4,23 @@
  *
  * Unit tests for encoding the status get response.
  *
- * \copyright 2021 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2021-2023 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
+#include <minunit/minunit.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol/serialization.h>
 #include <vpr/allocator/malloc_allocator.h>
 
-/* DISABLED GTEST */
-#if 0
-
 using namespace std;
+
+TEST_SUITE(test_vcblockchain_protocol_encode_resp_status_get);
 
 /**
  * This method should perform null checks on its pointer parameters.
  */
-TEST(test_vcblockchain_protocol_encode_resp_status_get, parameters)
+TEST(parameters)
 {
     const uint32_t EXPECTED_OFFSET = 26;
     const uint32_t EXPECTED_STATUS = 11;
@@ -31,21 +31,21 @@ TEST(test_vcblockchain_protocol_encode_resp_status_get, parameters)
     malloc_allocator_options_init(&alloc_opts);
 
     /* this method performs null checks on pointer parameters. */
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_status_get(
-            nullptr, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS));
-    EXPECT_EQ(
-        VCBLOCKCHAIN_ERROR_INVALID_ARG,
-        vcblockchain_protocol_encode_resp_status_get(
-            &buffer, nullptr, EXPECTED_OFFSET, EXPECTED_STATUS));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_status_get(
+                    nullptr, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS));
+    TEST_EXPECT(
+        VCBLOCKCHAIN_ERROR_INVALID_ARG
+            == vcblockchain_protocol_encode_resp_status_get(
+                    &buffer, nullptr, EXPECTED_OFFSET, EXPECTED_STATUS));
 
     /* clean up. */
     dispose((disposable_t*)&alloc_opts);
 }
 
 /* This method should encode the response message. */
-TEST(test_vcblockchain_protocol_encode_resp_status_get, happy_path)
+TEST(happy_path)
 {
     const uint32_t EXPECTED_OFFSET = 26;
     const uint32_t EXPECTED_STATUS = 11;
@@ -59,23 +59,22 @@ TEST(test_vcblockchain_protocol_encode_resp_status_get, happy_path)
     buffer.data = nullptr; buffer.size = 0;
 
     /* this method should succeed. */
-    ASSERT_EQ(
-        VCBLOCKCHAIN_STATUS_SUCCESS,
-        vcblockchain_protocol_encode_resp_status_get(
-            &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == vcblockchain_protocol_encode_resp_status_get(
+                    &buffer, &alloc_opts, EXPECTED_OFFSET, EXPECTED_STATUS));
 
     /* the buffer should not be null. */
-    ASSERT_NE(nullptr, buffer.data);
-    ASSERT_EQ(3 * sizeof(uint32_t), buffer.size);
+    TEST_ASSERT(nullptr != buffer.data);
+    TEST_ASSERT(3 * sizeof(uint32_t) == buffer.size);
 
     /* check the integer values. */
     uint32_t* uarr = (uint32_t*)buffer.data;
-    EXPECT_EQ(htonl(PROTOCOL_REQ_ID_STATUS_GET), uarr[0]);
-    EXPECT_EQ(htonl(EXPECTED_STATUS), uarr[1]);
-    EXPECT_EQ(htonl(EXPECTED_OFFSET), uarr[2]);
+    TEST_EXPECT(htonl(PROTOCOL_REQ_ID_STATUS_GET) == uarr[0]);
+    TEST_EXPECT(htonl(EXPECTED_STATUS) == uarr[1]);
+    TEST_EXPECT(htonl(EXPECTED_OFFSET) == uarr[2]);
 
     /* clean up. */
     dispose((disposable_t*)&buffer);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
