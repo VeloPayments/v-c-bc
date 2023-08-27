@@ -3,11 +3,13 @@
  *
  * Unit tests for writing the handshake ack to a server socket.
  *
- * \copyright 2020-2022 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2023 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
+#include <cstring>
 #include <memory>
+#include <minunit/minunit.h>
 #include <queue>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
@@ -15,19 +17,18 @@
 
 #include "../dummy_psock.h"
 
-/* DISABLED GTEST */
-#if 0
-
 using namespace std;
 
 RCPR_IMPORT_allocator_as(rcpr);
 RCPR_IMPORT_psock;
 RCPR_IMPORT_resource;
 
+TEST_SUITE(test_vcblockchain_protocol_sendreq_handshake_ack);
+
 /**
  * Test the happy path.
  */
-TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
+TEST(happy_path)
 {
     psock* sock;
     rcpr_allocator* alloc;
@@ -60,126 +61,131 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
     malloc_allocator_options_init(&alloc_opts);
 
     /* create an RCPR allocator instance. */
-    ASSERT_EQ(STATUS_SUCCESS, rcpr_malloc_allocator_create(&alloc));
+    TEST_ASSERT(STATUS_SUCCESS == rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_options_init(&suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_options_init(
+                    &suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
 
     /* create the shared secret buffer. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_cipher_key_agreement_shared_secret(
-            &suite, &shared_secret));
-    ASSERT_EQ(sizeof(SHARED_SECRET), shared_secret.size);
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_buffer_init_for_cipher_key_agreement_shared_secret(
+                    &suite, &shared_secret));
+    TEST_ASSERT(sizeof(SHARED_SECRET) == shared_secret.size);
     memcpy(shared_secret.data, SHARED_SECRET, shared_secret.size);
 
     /* create the nonce buffer. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
-            &suite, &server_challenge_nonce));
-    ASSERT_EQ(sizeof(CHALLENGE_NONCE), server_challenge_nonce.size);
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_buffer_init_for_cipher_key_agreement_nonce(
+                    &suite, &server_challenge_nonce));
+    TEST_ASSERT(sizeof(CHALLENGE_NONCE) == server_challenge_nonce.size);
     memcpy(server_challenge_nonce.data, CHALLENGE_NONCE,
            server_challenge_nonce.size);
 
     /* create the digest buffer. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_buffer_init_for_mac_authentication_code(
-            &suite, &digest, true));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_buffer_init_for_mac_authentication_code(
+                    &suite, &digest, true));
 
     /* create the mac instance. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_mac_short_init(&suite, &mac, &shared_secret));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_mac_short_init(&suite, &mac, &shared_secret));
 
     /* add the challenge bytes to the mac. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_mac_digest(
-            &mac, (const uint8_t*)server_challenge_nonce.data,
-            server_challenge_nonce.size));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_mac_digest(
+                    &mac, (const uint8_t*)server_challenge_nonce.data,
+                    server_challenge_nonce.size));
 
     /* finalize the mac. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_mac_finalize(&mac, &digest));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_mac_finalize(&mac, &digest));
 
     /* create the dummy socket. */
-    ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_psock_create(
-            &sock, alloc,
-            [&](psock*, void*, size_t*) -> int {
-                return VCBLOCKCHAIN_ERROR_SSOCK_READ;
-            },
-            [&](psock*, const void* val, size_t* size) -> int {
-                const uint8_t* bval = (const uint8_t*)val;
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == dummy_psock_create(
+                    &sock, alloc,
+                    [&](psock*, void*, size_t*) -> int {
+                        return VCBLOCKCHAIN_ERROR_SSOCK_READ;
+                    },
+                    [&](psock*, const void* val, size_t* size) -> int {
+                        const uint8_t* bval = (const uint8_t*)val;
 
-                for (size_t i = 0; i < *size; ++i)
-                    stream.push(bval[i]);
+                        for (size_t i = 0; i < *size; ++i)
+                            stream.push(bval[i]);
 
-                return VCBLOCKCHAIN_STATUS_SUCCESS;
-            }));
+                        return VCBLOCKCHAIN_STATUS_SUCCESS;
+                    }));
 
     /* PRECONDITIONS - set the IVs to 0. */
     client_iv = server_iv = 0;
 
     /* writing the handshake ack should succeed. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vcblockchain_protocol_sendreq_handshake_ack(
-            sock, &suite, &client_iv, &server_iv, &shared_secret,
-            &server_challenge_nonce));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vcblockchain_protocol_sendreq_handshake_ack(
+                    sock, &suite, &client_iv, &server_iv, &shared_secret,
+                    &server_challenge_nonce));
 
     /* the nonces should be set. */
-    EXPECT_EQ(EXPECTED_CLIENT_IV, client_iv);
-    EXPECT_EQ(EXPECTED_SERVER_IV_AFTER_SENDREQ, server_iv);
+    TEST_EXPECT(EXPECTED_CLIENT_IV == client_iv);
+    TEST_EXPECT(EXPECTED_SERVER_IV_AFTER_SENDREQ == server_iv);
 
     /* release the old socket. */
-    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
+    TEST_ASSERT(
+        STATUS_SUCCESS == resource_release(psock_resource_handle(sock)));
 
     /* initialize the socket for reading. */
-    ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_psock_create(
-            &sock, alloc,
-            [&](psock*, void* val, size_t* size) -> int {
-                uint8_t* bval = (uint8_t*)val;
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == dummy_psock_create(
+                    &sock, alloc,
+                    [&](psock*, void* val, size_t* size) -> int {
+                        uint8_t* bval = (uint8_t*)val;
 
-                if (stream.size() < *size)
-                    return VCBLOCKCHAIN_ERROR_SSOCK_READ;
+                        if (stream.size() < *size)
+                            return VCBLOCKCHAIN_ERROR_SSOCK_READ;
 
-                for (size_t i = 0; i < *size; ++i)
-                {
-                    bval[i] = stream.front();
-                    stream.pop();
-                }
+                        for (size_t i = 0; i < *size; ++i)
+                        {
+                            bval[i] = stream.front();
+                            stream.pop();
+                        }
 
-                return VCBLOCKCHAIN_STATUS_SUCCESS;
-            },
-            [&](psock*, const void*, size_t*) -> int {
-                return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
-            }));
+                        return VCBLOCKCHAIN_STATUS_SUCCESS;
+                    },
+                    [&](psock*, const void*, size_t*) -> int {
+                        return VCBLOCKCHAIN_ERROR_SSOCK_WRITE;
+                    }));
 
     /* force the server_iv to 1 for recvresp. */
     server_iv = 0x0000000000000001;
 
     /* reading a response should succeed. */
-    ASSERT_EQ(
-        VCBLOCKCHAIN_STATUS_SUCCESS,
-        vcblockchain_protocol_recvresp(
-            sock, alloc, &suite, &server_iv, &shared_secret, &out));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == vcblockchain_protocol_recvresp(
+                    sock, alloc, &suite, &server_iv, &shared_secret, &out));
 
     /* the digest should match. */
-    ASSERT_EQ(digest.size, out.size);
-    EXPECT_EQ(0, memcmp(digest.data, out.data, digest.size));
+    TEST_ASSERT(digest.size == out.size);
+    TEST_EXPECT(0 == memcmp(digest.data, out.data, digest.size));
 
     /* clean up. */
-    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
-    ASSERT_EQ(
-        STATUS_SUCCESS,
-        resource_release(rcpr_allocator_resource_handle(alloc)));
+    TEST_ASSERT(
+        STATUS_SUCCESS == resource_release(psock_resource_handle(sock)));
+    TEST_ASSERT(
+        STATUS_SUCCESS
+            == resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&out);
     dispose((disposable_t*)&shared_secret);
     dispose((disposable_t*)&server_challenge_nonce);
@@ -188,4 +194,3 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_ack, happy_path)
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
