@@ -3,19 +3,17 @@
  *
  * Unit tests for writing the handshake request to a server socket.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2023 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <arpa/inet.h>
 #include <memory>
+#include <minunit/minunit.h>
 #include <vcblockchain/error_codes.h>
 #include <vcblockchain/protocol.h>
 #include <vpr/allocator/malloc_allocator.h>
 
 #include "../dummy_psock.h"
-
-/* DISABLED GTEST */
-#if 0
 
 using namespace std;
 
@@ -23,10 +21,12 @@ RCPR_IMPORT_allocator_as(rcpr);
 RCPR_IMPORT_psock;
 RCPR_IMPORT_resource;
 
+TEST_SUITE(test_vcblockchain_protocol_sendreq_handshake_request);
+
 /**
  * Test the happy path.
  */
-TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
+TEST(happy_path)
 {
     psock* sock;
     rcpr_allocator* alloc;
@@ -46,29 +46,31 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     malloc_allocator_options_init(&alloc_opts);
 
     /* create an RCPR allocator instance. */
-    ASSERT_EQ(
-        STATUS_SUCCESS,
-        rcpr_malloc_allocator_create(&alloc));
+    TEST_ASSERT(
+        STATUS_SUCCESS
+            == rcpr_malloc_allocator_create(&alloc));
 
     /* create the crypto suite. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vccrypt_suite_options_init(&suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vccrypt_suite_options_init(
+                    &suite, &alloc_opts, VCCRYPT_SUITE_VELO_V1));
 
     /* create the dummy socket. */
-    ASSERT_EQ(VCBLOCKCHAIN_STATUS_SUCCESS,
-        dummy_psock_create(
-            &sock, alloc,
-            [&](psock*, void*, size_t*) -> int {
-                return VCBLOCKCHAIN_STATUS_SUCCESS;
-            },
-            [&](psock* sock, const void* val, size_t* size) -> int {
-                write_calls.push_back(
-                    make_shared<psock_write_params>(
-                        sock, val, *size));
+    TEST_ASSERT(
+        VCBLOCKCHAIN_STATUS_SUCCESS
+            == dummy_psock_create(
+                    &sock, alloc,
+                    [&](psock*, void*, size_t*) -> int {
+                        return VCBLOCKCHAIN_STATUS_SUCCESS;
+                    },
+                    [&](psock* sock, const void* val, size_t* size) -> int {
+                        write_calls.push_back(
+                            make_shared<psock_write_params>(
+                                sock, val, *size));
 
-                return VCBLOCKCHAIN_STATUS_SUCCESS;
-            }));
+                        return VCBLOCKCHAIN_STATUS_SUCCESS;
+                    }));
 
     /* PRECONDITIONS - set the buffers to null. */
     client_key_nonce.data = nullptr;
@@ -77,32 +79,34 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
     client_challenge_nonce.size = 0U;
 
     /* writing the handshake request should succeed. */
-    ASSERT_EQ(
-        VCCRYPT_STATUS_SUCCESS,
-        vcblockchain_protocol_sendreq_handshake_request(
-            sock, &suite, &client_id, &client_key_nonce,
-            &client_challenge_nonce));
+    TEST_ASSERT(
+        VCCRYPT_STATUS_SUCCESS
+            == vcblockchain_protocol_sendreq_handshake_request(
+                    sock, &suite, &client_id, &client_key_nonce,
+                    &client_challenge_nonce));
 
     /* the buffer data and size values should be set. */
-    ASSERT_NE(nullptr, client_key_nonce.data);
-    ASSERT_EQ(suite.key_cipher_opts.minimum_nonce_size, client_key_nonce.size);
-    ASSERT_NE(nullptr, client_challenge_nonce.data);
-    ASSERT_EQ(
-        suite.key_cipher_opts.minimum_nonce_size, client_challenge_nonce.size);
+    TEST_ASSERT(nullptr != client_key_nonce.data);
+    TEST_ASSERT(
+        suite.key_cipher_opts.minimum_nonce_size == client_key_nonce.size);
+    TEST_ASSERT(nullptr != client_challenge_nonce.data);
+    TEST_ASSERT(
+        suite.key_cipher_opts.minimum_nonce_size
+            == client_challenge_nonce.size);
 
     /* sock write should have been called once. */
-    ASSERT_EQ(3U, write_calls.size());
+    TEST_ASSERT(3U == write_calls.size());
 
     /* first call is the type. */
-    EXPECT_EQ(sock, write_calls[0]->sock);
-    EXPECT_EQ(sizeof(uint32_t), write_calls[0]->buf.size());
+    TEST_EXPECT(sock == write_calls[0]->sock);
+    TEST_EXPECT(sizeof(uint32_t) == write_calls[0]->buf.size());
 
     /* second call is the size. */
-    EXPECT_EQ(sock, write_calls[1]->sock);
-    EXPECT_EQ(sizeof(uint32_t), write_calls[1]->buf.size());
+    TEST_EXPECT(sock == write_calls[1]->sock);
+    TEST_EXPECT(sizeof(uint32_t) == write_calls[1]->buf.size());
 
     /* the socket is the first argument. */
-    EXPECT_EQ(sock, write_calls[2]->sock);
+    TEST_EXPECT(sock == write_calls[2]->sock);
 
     /* compute the size of the request packet payload. */
     size_t expected_payload_size =
@@ -115,16 +119,16 @@ TEST(test_vcblockchain_protocol_sendreq_handshake_request, happy_path)
         + client_challenge_nonce.size; /* challenge nonce size */
 
     /* the buffer written was the correct size for the payload. */
-    EXPECT_EQ(expected_payload_size, write_calls[2]->buf.size());
+    TEST_EXPECT(expected_payload_size == write_calls[2]->buf.size());
 
     /* clean up. */
-    ASSERT_EQ(STATUS_SUCCESS, resource_release(psock_resource_handle(sock)));
-    ASSERT_EQ(
-        STATUS_SUCCESS,
-        resource_release(rcpr_allocator_resource_handle(alloc)));
+    TEST_ASSERT(
+        STATUS_SUCCESS == resource_release(psock_resource_handle(sock)));
+    TEST_ASSERT(
+        STATUS_SUCCESS
+            == resource_release(rcpr_allocator_resource_handle(alloc)));
     dispose((disposable_t*)&client_key_nonce);
     dispose((disposable_t*)&client_challenge_nonce);
     dispose((disposable_t*)&suite);
     dispose((disposable_t*)&alloc_opts);
 }
-#endif
